@@ -1,0 +1,127 @@
+{
+  "name": "powerbi-angular-client",
+  "jspm": {
+    "name": "powerbi-angular-client",
+    "dependencies": {
+      "angular": "github:angular/bower-angular@^1.5.3",
+      "angular-powerbi": "npm:angular-powerbi@1.0.0-beta.3",
+      "angular-ui-router": "github:angular-ui/ui-router@^0.2.18",
+      "bootstrap": "github:twbs/bootstrap@^3.3.6"
+    },
+    "devDependencies": {
+      "plugin-typescript": "github:frankwallis/plugin-typescript@^4.0.5"
+    },
+    "peerDependencies": {
+      "os": "github:jspm/nodelibs-os@^0.2.0-alpha",
+      "process": "github:jspm/nodelibs-process@^0.2.0-alpha"
+    },
+    "overrides": {
+      "github:angular-ui/ui-router@0.2.18": {
+        "directories": {
+          "lib": "release"
+        },
+        "format": "cjs",
+        "main": "angular-ui-router",
+        "registry": "jspm",
+        "dependencies": {
+          "angular": "^1.3.2"
+        },
+        "meta": {
+          "angular-ui-router.js": {
+            "deps": [
+              "angular"
+            ],
+            "format": "global"
+          }
+        }
+      },
+      "github:angular/bower-angular@1.5.3": {
+        "main": "angular",
+        "meta": {
+          "angular.js": {
+            "exports": "angular",
+            "format": "global"
+          }
+        }
+      },
+      "github:components/jquery@2.2.1": {
+        "main": "jquery"
+      },
+      "github:twbs/bootstrap@3.3.6": {
+        "shim": {
+          "js/bootstrap": {
+            "deps": [
+              "jquery"
+            ],
+            "exports": "$"
+          }
+        },
+        "dependencies": {
+          "jquery": "github:components/jquery"
+        },
+        "files": [
+          "dist",
+          "fonts",
+          "js",
+          "css",
+          "less",
+          "grunt",
+          "LICENSE"
+        ],
+        "systemjs": {
+          "main": "dist/js/bootstrap.js",
+          "modules": {
+            "dist/js/bootstrap.js": {
+              "deps": [
+                "jquery"
+              ],
+              "exports": "$"
+            }
+          }
+        }
+      },
+      "npm:angular@1.5.5": {
+        "format": "global",
+        "jspmNodeConversion": false,
+        "main": "angular",
+        "meta": {
+          "angular.js": {
+            "exports": "angular",
+            "format": "global"
+          }
+        }
+      },
+      "npm:typescript@1.8.9": {
+        "browser": {},
+        "map": {
+          "buffer": "@empty",
+          "child_process": "@empty",
+          "fs": "@empty",
+          "path": "@empty",
+          "process": "@empty",
+          "readline": "@empty"
+        }
+      }
+    }
+  },
+  "version": "1.0.0-beta.1",
+  "description": "",
+  "main": "dist/index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "buildjs": "jspm build app/app.js dist/app.js"
+  },
+  "author": "Microsoft Power BI Team",
+  "license": "MIT",
+  "devDependencies": {
+    "angular-templatecache": "0.0.1",
+    "gulp-angular-templatecache": "^1.8.0",
+    "gulp-help": "^1.6.1",
+    "gulp-html-replace": "^1.5.5",
+    "gulp-minify-html": "^1.0.6",
+    "gulp-rename": "^1.2.2",
+    "gulp-typescript": "^2.13.0",
+    "merge2": "^1.0.2",
+    "run-sequence": "^1.1.5"
+  }
+}

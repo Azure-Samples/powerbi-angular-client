@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "noImplicitAny": false,
+        "sourceMap": true
+    },
+    "exclude": [
+        "node_modules",
+        "jspm_packages",
+        "typings/main",
+        "typings/main.d.ts"
+    ]
+}

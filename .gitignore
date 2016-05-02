@@ -1,0 +1,8 @@
+jspm_packages
+node_modules
+typings
+.vscode
+app/*.js
+app/*/*.js
+app/*/*/*.js
+app/*/*/*/*.js

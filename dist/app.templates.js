@@ -1,0 +1,3 @@
+angular.module("app").run(["$templateCache", function($templateCache) {$templateCache.put("/app/announcements/announcements.template.html","<h1>Announcements Template</h1><p>vm.myVariable: {{vm.myVariable}}</p>");
+$templateCache.put("/app/application/application.template.html","<div class=container><h4>Application Route:</h4><ul><li><a ui-sref=application.assignments>Assignments</a></li><li><a ui-sref=application.announcements>Announcements</a></li></ul><hr class=m-y-md><div ui-view=main>Main Outlet Loading...</div></div>");
+$templateCache.put("/app/assignments/assignments.template.html","<h1>Assignments Template</h1><p>vm.myVariable: {{vm.myVariable}}</p>");}]);
