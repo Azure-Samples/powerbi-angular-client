@@ -13,7 +13,7 @@ Sample application which demonstrates using [angular-powerbi](https://github.com
   
   `jspm install`
   
-  If you don't have jspm installed, you can install it locally or globaly using `npm install -g jspm`
+  If you don't have jspm installed, you can install it locally or globaly using `npm install -g jspm@0.17.0-beta.15` (`PowerBI-Angular will fail to install with jspm v0.16.x)
   
 3. Serve the files from the root of the repository:
 
