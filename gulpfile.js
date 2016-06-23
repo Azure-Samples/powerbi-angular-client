@@ -9,6 +9,7 @@ var gulp = require('gulp-help')(require('gulp')),
 
 gulp.task('build', function (done) {
     runSequence(
+        'compile',
         ['build:js', 'templates', 'replace'],
         done
     );
