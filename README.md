@@ -3,23 +3,37 @@ Sample application which demonstrates using [angular-powerbi](https://github.com
 
 ## Running this sample
 
-1. Clone the repository
+### Clone the repository
 
-  `git clone https://github.com/Azure-Samples/powerbi-angular-client`
-  
-2. Install dependencies
+```
+git clone https://github.com/Azure-Samples/powerbi-angular-client
+```
 
-  `npm install`
-  
-  `jspm install`
-  
-  If you don't have jspm installed, you can install it locally or globaly using `npm install -g jspm@0.17.0-beta.15` (`PowerBI-Angular will fail to install with jspm v0.16.x)
-  
-3. Serve the files from the root of the repository:
+### Install global dependencies if needed
+```
+npm install -g typings
+npm install -g jspm@0.17.0-beta.15
+```
+(PowerBI-Angular will fail to install with jspm v0.16.x)
+
+### Install dependencies
+
+```
+npm install
+jspm install
+```
+
+### Run Build
+
+```
+gulp build
+```
+
+### Serve the files from the root of the repository:
 
   Example: `http-server`
   
-4. Open `app/index.html` within the browser:
+### Open `app/index.html` within the browser:
 
   Example: `127.0.0.1:8080/app/`
 
