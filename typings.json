@@ -1,12 +1,11 @@
 {
-  "name": "powerbi-sample-client-angular",
-  "version": false,
+  "name": "powerbi-angular-client",
   "dependencies": {},
-  "ambientDependencies": {
-    "angular": "registry:dt/angular#1.5.0+20160412133217",
-    "angular-ui-router": "registry:dt/angular-ui-router#1.1.5+20160412134757"
+  "globalDependencies": {
+    "angular": "registry:dt/angular#1.5.0+20160619025852",
+    "angular-ui-router": "registry:dt/angular-ui-router#1.1.5+20160521151413"
   },
-  "ambientDevDependencies": {
-    "jquery": "registry:dt/jquery#1.10.0+20160417213236"
+  "globalDevDependencies": {
+    "jquery": "registry:dt/jquery#1.10.0+20160620094458"
   }
 }
