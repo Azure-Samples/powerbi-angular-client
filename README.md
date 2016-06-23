@@ -28,6 +28,7 @@ jspm install
 ```
 gulp build
 ```
+> Note: If you see errors during the compile task such as: "app\app.ts(10,29): error TS2307: Cannot find module './services/reports.js'." disregard them for now.  The compile task will still finish and output .js files.
 
 ### Serve the files from the root of the repository:
 
