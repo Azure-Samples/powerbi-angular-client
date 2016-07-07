@@ -1,0 +1,9 @@
+<div class="powerbi-page-navigation">
+  <button type="button" id="prevbutton" class="powerbi-page-navigation__previous btn btn-primary" ng-click="vm.previousPageClicked()">&lt; Prev</button>
+  <div id="reportpagesbuttons" class="powerbi-page-navigation__pages">
+    <button type="button" class="btn btn-success" ng-class="{ 'active': page.name === vm.activePage.name }" ng-repeat="page in vm.pages" ng-click="vm.pageClicked(page);">{{page.displayName}}</button>
+    <span ng-if="vm.pages.length === 0">No pages loaded</span>
+  </div>
+  <button type="button" id="cyclebutton" class="powerbi-page-navigation__cycle btn btn-warning" ng-class="{'active': vm.cycleIsEnabled }" ng-click="vm.cyclePageClicked()"><span ng-show="vm.cycleIsEnabled">Disable</span><span ng-show="!vm.cycleIsEnabled">Enable</span> Cycle</button>
+  <button type="button" id="nextbutton" class="powerbi-page-navigation__next btn btn-primary" ng-click="vm.nextPageClicked()">Next &gt;</button>
+</div>

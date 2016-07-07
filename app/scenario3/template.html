@@ -4,15 +4,15 @@
 
 <powerbi-component options="vm.embedConfiguration" id="reportcustompagenav" class="powerbi-container" on-embedded="vm.onEmbedded($embed)"></powerbi-component>
 
-<div class="reportpageslist">
-  <button type="button" id="prevbutton" class="reportpageslist__previous btn btn-primary" ng-click="vm.previousPageClicked()">&lt; Prev</button>
-  <div id="reportpagesbuttons" class="reportpageslist__pages">
-    <button type="button" class="btn btn-success" ng-class="{ 'active': page.name === vm.activePage.name }" ng-repeat="page in vm.pages" ng-click="vm.pageClicked(page);">{{page.displayName}}</button>
-    <span ng-if="vm.pages.length === 0">No pages loaded</span>
-  </div>
-  <button type="button" id="cyclebutton" class="reportpageslist__cycle btn btn-warning" ng-class="{'active': vm.cycleIsEnabled }" ng-click="vm.cyclePageClicked()"><span ng-show="vm.cycleIsEnabled">Disable</span><span ng-show="!vm.cycleIsEnabled">Enable</span> Cycle</button>
-  <button type="button" id="nextbutton" class="reportpageslist__next btn btn-primary" ng-click="vm.nextPageClicked()">Next &gt;</button>
-</div>
-<p>
+<h3 class="text-center">
   {{vm.activePage.displayName}}
-</p>
+</h3>
+
+<powerbi-page-navigation
+  active-page="vm.activePage"
+  pages="vm.pages"
+  on-cycle-clicked="vm.cyclePageClicked()"
+  on-previous-clicked="vm.previousPageClicked()"
+  on-next-clicked="vm.nextPageClicked()"
+  on-page-clicked="vm.pageClicked($page)"
+></powerbi-page-navigation>

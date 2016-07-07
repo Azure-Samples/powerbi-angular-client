@@ -39,7 +39,10 @@ export default class controller {
         this.embedConfiguration = angular.extend(embedConfiguration, {
             embedUrl: 'https://portal.analysis.windows-int.net/appTokenReportEmbed?reportId=c4d31ef0-7b34-4d80-9bcb-5974d1405572',
             id: 'c4d31ef0-7b34-4d80-9bcb-5974d1405572',
-            accessToken: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2ZXIiOiIwLjEuMCIsImF1ZCI6Imh0dHBzOi8vYW5hbHlzaXMud2luZG93cy5uZXQvcG93ZXJiaS9hcGkiLCJpc3MiOiJQb3dlckJJU0RLIiwidHlwZSI6ImVtYmVkIiwid2NuIjoiV2FsbGFjZSIsIndpZCI6IjUyMWNkYTJhLTRlZDItNDg5Ni1hYzA0LWM5YzM4MWRjMjUyYSIsInJpZCI6ImM0ZDMxZWYwLTdiMzQtNGQ4MC05YmNiLTU5NzRkMTQwNTU3MiIsIm5iZiI6MTQ2NzkwNjI4NiwiZXhwIjoxNDY3OTA5ODg2fQ.wZs7ToDmxij8AgYySPAY8sGu532k7xN3_QYZoFAP7rU'
+            accessToken: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2ZXIiOiIwLjEuMCIsImF1ZCI6Imh0dHBzOi8vYW5hbHlzaXMud2luZG93cy5uZXQvcG93ZXJiaS9hcGkiLCJpc3MiOiJQb3dlckJJU0RLIiwidHlwZSI6ImVtYmVkIiwid2NuIjoiV2FsbGFjZSIsIndpZCI6IjUyMWNkYTJhLTRlZDItNDg5Ni1hYzA0LWM5YzM4MWRjMjUyYSIsInJpZCI6ImM0ZDMxZWYwLTdiMzQtNGQ4MC05YmNiLTU5NzRkMTQwNTU3MiIsIm5iZiI6MTQ2NzkyODE1NywiZXhwIjoxNDY3OTMxNzU3fQ.L6CV_W22is_TtFRRPvop94i6tgGQoKweOD8hcX9ROMc',
+            settings: {
+                navContentPaneEnabled: false
+            }
         });
     }
 
@@ -66,7 +69,7 @@ export default class controller {
         console.log(`Report embedded: `, report);
         this.report = report;
 
-        report.on('loaded', event => {
+        report.on<any>('loaded', event => {
             report.getPages()
                 .then(pages => {
                     this.$scope.$apply(() => {
@@ -78,8 +81,8 @@ export default class controller {
                 });
         });
 
-        report.on('pageChanged', event => {
-            const page: pbi.models.IPage = (<any>event).detail.newPage;
+        report.on<{ newPage: pbi.models.IPage }>('pageChanged', event => {
+            const page = event.detail.newPage;
             this.$scope.$apply(() => {
                 this.updateActivePage(page);
             });

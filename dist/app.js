@@ -54,6 +54,7 @@
 	var module_2 = __webpack_require__(7);
 	var module_3 = __webpack_require__(10);
 	var module_4 = __webpack_require__(13);
+	var component_1 = __webpack_require__(16);
 	// Config
 	config['$inject'] = ["$stateProvider", "$urlRouterProvider", "ReportsServiceProvider"];
 	function config($stateProvider, $urlRouterProvider, ReportsServiceProvider) {
@@ -75,6 +76,7 @@
 	    .controller('Scenario1Controller', module_2.controller)
 	    .controller('Scenario2Controller', module_3.controller)
 	    .controller('Scenario3Controller', module_4.controller)
+	    .directive('powerbiPageNavigation', function () { return new component_1.default(); })
 	    .config(config);
 
 
@@ -233,7 +235,7 @@
 	        this.model = angular.extend(model, {
 	            embedUrl: 'https://portal.analysis.windows-int.net/appTokenReportEmbed?reportId=c4d31ef0-7b34-4d80-9bcb-5974d1405572',
 	            id: 'c4d31ef0-7b34-4d80-9bcb-5974d1405572',
-	            accessToken: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2ZXIiOiIwLjEuMCIsImF1ZCI6Imh0dHBzOi8vYW5hbHlzaXMud2luZG93cy5uZXQvcG93ZXJiaS9hcGkiLCJpc3MiOiJQb3dlckJJU0RLIiwidHlwZSI6ImVtYmVkIiwid2NuIjoiV2FsbGFjZSIsIndpZCI6IjUyMWNkYTJhLTRlZDItNDg5Ni1hYzA0LWM5YzM4MWRjMjUyYSIsInJpZCI6ImM0ZDMxZWYwLTdiMzQtNGQ4MC05YmNiLTU5NzRkMTQwNTU3MiIsIm5iZiI6MTQ2NzkwNjI0MSwiZXhwIjoxNDY3OTA5ODQxfQ.Um67WHRONF0FO-HcISFKDGVV6XIQzRhh-Ka59SHXi1I'
+	            accessToken: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2ZXIiOiIwLjEuMCIsImF1ZCI6Imh0dHBzOi8vYW5hbHlzaXMud2luZG93cy5uZXQvcG93ZXJiaS9hcGkiLCJpc3MiOiJQb3dlckJJU0RLIiwidHlwZSI6ImVtYmVkIiwid2NuIjoiV2FsbGFjZSIsIndpZCI6IjUyMWNkYTJhLTRlZDItNDg5Ni1hYzA0LWM5YzM4MWRjMjUyYSIsInJpZCI6ImM0ZDMxZWYwLTdiMzQtNGQ4MC05YmNiLTU5NzRkMTQwNTU3MiIsIm5iZiI6MTQ2NzkyODE1NywiZXhwIjoxNDY3OTMxNzU3fQ.L6CV_W22is_TtFRRPvop94i6tgGQoKweOD8hcX9ROMc'
 	        });
 	        this.title = 'Scenario 1';
 	    }
@@ -399,7 +401,10 @@
 	        this.embedConfiguration = angular.extend(embedConfiguration, {
 	            embedUrl: 'https://portal.analysis.windows-int.net/appTokenReportEmbed?reportId=c4d31ef0-7b34-4d80-9bcb-5974d1405572',
 	            id: 'c4d31ef0-7b34-4d80-9bcb-5974d1405572',
-	            accessToken: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2ZXIiOiIwLjEuMCIsImF1ZCI6Imh0dHBzOi8vYW5hbHlzaXMud2luZG93cy5uZXQvcG93ZXJiaS9hcGkiLCJpc3MiOiJQb3dlckJJU0RLIiwidHlwZSI6ImVtYmVkIiwid2NuIjoiV2FsbGFjZSIsIndpZCI6IjUyMWNkYTJhLTRlZDItNDg5Ni1hYzA0LWM5YzM4MWRjMjUyYSIsInJpZCI6ImM0ZDMxZWYwLTdiMzQtNGQ4MC05YmNiLTU5NzRkMTQwNTU3MiIsIm5iZiI6MTQ2NzkwNjI4NiwiZXhwIjoxNDY3OTA5ODg2fQ.wZs7ToDmxij8AgYySPAY8sGu532k7xN3_QYZoFAP7rU'
+	            accessToken: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2ZXIiOiIwLjEuMCIsImF1ZCI6Imh0dHBzOi8vYW5hbHlzaXMud2luZG93cy5uZXQvcG93ZXJiaS9hcGkiLCJpc3MiOiJQb3dlckJJU0RLIiwidHlwZSI6ImVtYmVkIiwid2NuIjoiV2FsbGFjZSIsIndpZCI6IjUyMWNkYTJhLTRlZDItNDg5Ni1hYzA0LWM5YzM4MWRjMjUyYSIsInJpZCI6ImM0ZDMxZWYwLTdiMzQtNGQ4MC05YmNiLTU5NzRkMTQwNTU3MiIsIm5iZiI6MTQ2NzkyODE1NywiZXhwIjoxNDY3OTMxNzU3fQ.L6CV_W22is_TtFRRPvop94i6tgGQoKweOD8hcX9ROMc',
+	            settings: {
+	                navContentPaneEnabled: false
+	            }
 	        });
 	    }
 	    controller.prototype.cyclePageClicked = function () {
@@ -526,6 +531,58 @@
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = state;
+
+
+/***/ },
+/* 16 */
+/***/ function(module, exports) {
+
+	"use strict";
+	var Controller = (function () {
+	    function Controller($scope) {
+	        this.cycleIsEnabled = false;
+	        this.$scope = $scope;
+	    }
+	    Controller.prototype.cyclePageClicked = function () {
+	        this.cycleIsEnabled = !this.cycleIsEnabled;
+	        this.onCycleClicked();
+	    };
+	    Controller.prototype.nextPageClicked = function () {
+	        this.onNextClicked();
+	    };
+	    Controller.prototype.pageClicked = function (page) {
+	        this.onPageClicked({ $page: page });
+	    };
+	    Controller.prototype.previousPageClicked = function () {
+	        this.onPreviousClicked();
+	    };
+	    Controller.$inject = [
+	        '$scope'
+	    ];
+	    return Controller;
+	}());
+	exports.Controller = Controller;
+	var Directive = (function () {
+	    function Directive() {
+	        this.restrict = "E";
+	        // template = "<div>ABC</div>";
+	        this.templateUrl = "/app/components/powerbi-page-navigation/template.html";
+	        this.scope = {
+	            activePage: "=",
+	            pages: "=",
+	            onCycleClicked: "&",
+	            onNextClicked: "&",
+	            onPageClicked: "&",
+	            onPreviousClicked: "&"
+	        };
+	        this.controller = Controller;
+	        this.bindToController = true;
+	        this.controllerAs = "vm";
+	    }
+	    return Directive;
+	}());
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = Directive;
 
 
 /***/ }
