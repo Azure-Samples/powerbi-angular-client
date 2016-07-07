@@ -1,60 +1,44 @@
 var gulp = require('gulp-help')(require('gulp')),
     $ = require('gulp-load-plugins')({ lazy: true }),
     config = require('./gulp/config')(),
-    exec = require('child_process').execSync,
-    merge2  = require('merge2'),
-    runSequence = require('run-sequence')
+    merge2 = require('merge2'),
+    runSequence = require('run-sequence'),
+    webpack = require('webpack-stream'),
+    webpackConfig = require('./webpack.config')
     ;
-
 
 gulp.task('build', function (done) {
     runSequence(
-        'compile',
-        ['build:js', 'templates', 'replace'],
+        'compile:src',
+        ['templates', 'replace'],
         done
     );
 });
 
-gulp.task('compile', function (done) {
-    runSequence(
-        'compile:app',
-        'copy:modules',
-        done
-    )
+gulp.task('compile:watch', 'Watch sources', function () {
+    gulp.watch(['./app/**/*.ts', './app/**/*.html'], ['compile:src', 'templates']);
 });
 
-gulp.task('build:js', function() {
-    exec('npm run buildjs', function(err, stdout, stderr) {
-        if (err) {
-            throw err;
-        }
-        else {
-            console.log('Build complete!');
-        }
-    });
-});
-
-gulp.task('compile:app', function () {
-    var tsProject = $.typescript.createProject('tsconfig.json');
-    
-    var tsResult = gulp.src(['typings/browser/**/*.d.ts', './app/**/*.ts'])
-        .pipe($.typescript(tsProject))
-        ;
-        
-    return tsResult.js
-        .pipe(gulp.dest('./app'));
-});
-
-gulp.task('copy:modules', function () {
-    return gulp.src(['./app/**/*module.ts'])
-        .pipe($.rename({
-            extname: ".js"
+gulp.task('compile:src', 'Compile typescript for library', function() {
+    return gulp.src(['./app/**/*.ts'])
+        .pipe($.plumber({
+            errorHandler: function (error) {
+                console.log(error);
+                this.emit('end');
+            }
         }))
-        .pipe(gulp.dest('./app'));
+        .pipe(webpack(webpackConfig))
+        .pipe(gulp.dest('./dist'));
 });
 
-gulp.task('templates', function() {
+gulp.task('templates', function () {
     return gulp.src(config.templates)
+        .pipe($.plumber({
+            errorHandler: function (error) {
+                console.log(error);
+                this.emit('end');
+            }
+        }))
         .pipe($.minifyHtml({
             empty: true
         }))
@@ -66,7 +50,7 @@ gulp.task('templates', function() {
         ;
 });
 
-gulp.task('replace', function() {
+gulp.task('replace', function () {
     return gulp.src(config.htmlPage)
         .pipe($.htmlReplace({
             'js': ['app.js', 'app.templates.js']

@@ -1,7 +1,7 @@
 module.exports = function() {
     const config = {
         allJs: ['app/**/*.js'],
-        templates: ['app/**/*.template.html'],
+        templates: ['app/**/*template.html'],
         htmlPage: 'app/index.html',
         distFolder: 'dist/',
 

@@ -11,32 +11,26 @@ git clone https://github.com/Azure-Samples/powerbi-angular-client
 
 ### Install global dependencies if needed
 ```
-npm install -g typings
-npm install -g jspm@0.17.0-beta.15
+npm install -g typings gulp
 ```
-(PowerBI-Angular will fail to install with jspm v0.16.x)
 
 ### Install dependencies
-
 ```
 npm install
-jspm install
 ```
 
 ### Run Build
-
 ```
 gulp build
 ```
-> Note: If you see errors during the compile task such as: "app\app.ts(10,29): error TS2307: Cannot find module './services/reports.js'." disregard them for now.  The compile task will still finish and output .js files.
 
 ### Serve the files from the root of the repository:
 
   Example: `http-server`
   
-### Open `app/index.html` within the browser:
+### Open `dist/index.html` within the browser:
 
-  Example: `127.0.0.1:8080/app/`
+  Example: `127.0.0.1:8080/dist/`
 
 ## Deploy this sample to Azure
 [![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://azuredeploy.net/)

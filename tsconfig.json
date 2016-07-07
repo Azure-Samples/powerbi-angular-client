@@ -1,12 +1,12 @@
 {
     "compilerOptions": {
-        "target": "es6",
-        "noImplicitAny": false,
+        "target": "es5",
+        "moduleResolution": "node",
+        "noImplicitAny": true,
         "sourceMap": true
     },
     "exclude": [
         "node_modules",
-        "jspm_packages",
         "typings/index.d.ts"
     ]
 }
