@@ -1,4 +1,4 @@
-import controller from './controller.js';
-import route from './route.js';
+import controller from './controller';
+import route from './route';
 
 export { controller, route };

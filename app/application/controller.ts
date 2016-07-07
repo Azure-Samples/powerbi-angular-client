@@ -3,6 +3,6 @@ export default class controller {
         '$scope'
     ];
 
-    constructor($scope) {
+    constructor($scope: ng.IScope) {
     }
 }

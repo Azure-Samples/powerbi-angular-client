@@ -1,23 +1,19 @@
-import angular from 'angular';
-import angularuirouter from 'angular-ui-router';
-import angularpowerbi from 'angular-powerbi';
-
-// Needed to force ui router to be loaded.
-console.log(angularuirouter);
-console.log(angularpowerbi);
+import * as angular from 'angular';
+import * as angularuirouter from 'angular-ui-router';
+import * as angularpowerbi from 'angular-powerbi';
 
 // Services
-import reportsProvider from './services/reports.js';
-import Utilities from './services/utilities.js';
+import reportsProvider from './services/reports';
+import Utilities from './services/utilities';
 
 // Pods
-import { controller as applicationController, route as applicationRoute } from './application/module.js';
-import { controller as scenario1Controller, route as scenario1Route } from './scenario1/module.js';
-import { controller as scenario2Controller, route as scenario2Route } from './scenario2/module.js';
+import { controller as applicationController, route as applicationRoute } from './application/module';
+import { controller as scenario1Controller, route as scenario1Route } from './scenario1/module';
+import { controller as scenario2Controller, route as scenario2Route } from './scenario2/module';
 
 // Config
 config['$inject'] = ["$stateProvider", "$urlRouterProvider", "ReportsServiceProvider"];
-function config($stateProvider, $urlRouterProvider, ReportsServiceProvider) {
+function config($stateProvider: angularuirouter.IStateProvider, $urlRouterProvider: angularuirouter.IUrlRouterProvider, ReportsServiceProvider: any) {
     
     ReportsServiceProvider.setBaseUrl('http://powerbipaasapi.azurewebsites.net/');
     

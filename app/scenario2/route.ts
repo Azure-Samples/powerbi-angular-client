@@ -1,4 +1,6 @@
-export default {
+import * as angularuirouter from 'angular-ui-router';
+
+const state: angularuirouter.IState = {
     name: "application.scenario2",
     parent: "application",
     url: "^/scenario2",
@@ -10,3 +12,5 @@ export default {
         }
     }
 }
+
+export default state;

@@ -1,10 +1,4 @@
-// TODO: Fix typing information from base
-interface IEmbedable {
-    name: string;
-    type: string;
-    accessToken: string;
-    embedUrl: string;
-}
+import * as pbi from 'powerbi-client';
 
 export class ReportsService {
     $http: ng.IHttpService
@@ -19,28 +13,28 @@ export class ReportsService {
         this.baseUrl = baseUrl;
     }
     
-    findAll(): ng.IPromise<IEmbedable[]> {
+    findAll(): ng.IPromise<pbi.IEmbedConfiguration[]> {
         return this.$http.get(`${this.baseUrl}/api/reports`)
             .then(response => response.data)
-            .then((reports: IEmbedable[]) => reports.map(this.normalizeReport))
+            .then((reports: pbi.IEmbedConfiguration[]) => reports.map(this.normalizeReport))
             ;
     }
     
-    findById(id: string): ng.IPromise<IEmbedable> {
+    findById(id: string): ng.IPromise<pbi.IEmbedConfiguration> {
         return this.$http.get(`${this.baseUrl}/api/reports/${id}`)
             .then(response => response.data)
             .then(this.normalizeReport)
             ;
     }
     
-    findByName(search: string): ng.IPromise<IEmbedable[]> {
+    findByName(search: string): ng.IPromise<pbi.IEmbedConfiguration[]> {
         return this.$http.get(`${this.baseUrl}/api/reports?query=${search}`)
             .then(response => response.data)
-            .then((reports: IEmbedable[]) => reports.map(this.normalizeReport))
+            .then((reports: pbi.IEmbedConfiguration[]) => reports.map(this.normalizeReport))
             ;
     }
     
-    private normalizeReport(report: IEmbedable) {
+    private normalizeReport(report: pbi.IEmbedConfiguration) {
         report.type = "report";
         return report;
     }
@@ -54,7 +48,7 @@ export default function ReportsServiceProvider() {
             baseUrl = url;
         },
     
-        $get: ['$http', function ($http) {
+        $get: ['$http', function ($http: ng.IHttpService) {
             return new ReportsService($http, baseUrl);
         }]
     };

@@ -1,6 +1,6 @@
-import { ReportsService } from '../services/reports.js';
-import Utilities from '../services/utilities.js';
-import * as pbi from 'angular-powerbi';
+import { ReportsService } from '../services/reports';
+import Utilities from '../services/utilities';
+import * as pbi from 'powerbi-client';
 
 export default class controller {
     $q: ng.IQService;
@@ -35,7 +35,7 @@ export default class controller {
         });
     }
     
-    embedReport(report): void {
+    embedReport(report: pbi.IEmbedConfiguration): void {
         const reportPromise: ng.IPromise<any> = new this.$q((resolve, reject) => {
             if(!report.accessToken) {
                 resolve(this.ReportsService.findById(report.id));

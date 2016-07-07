@@ -1,5 +1,7 @@
 <h1>Scenario 2</h1>
-<p>Dynamic: Search reports by name, render selected</p>
+<p>Dynamic: Report to embed is chosen by the user.</p>
+
+<p>Example: Search reports by name, render selected report.</p>
 <small>Hint: Type 'Re' in the text field and search to find all reports that begin with 'Re'</small>
 
 <form id="search-form" class="form-inline">
@@ -26,6 +28,4 @@
 <p class="text-right">
     <button type="button" class="btn btn-danger" ng-click="vm.resetClicked()">Reset</button>
 </p>
-<div class="powerbi-sample">
-    <powerbi-component options="vm.report"></powerbi-report>
-</div>
+<powerbi-component options="vm.report"></powerbi-report>

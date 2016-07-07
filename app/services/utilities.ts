@@ -5,14 +5,14 @@ export default class Utilities {
         '$timeout'
     ]
     
-    constructor($timeout) {
+    constructor($timeout: ng.ITimeoutService) {
         this.$timeout = $timeout;
     }
     
     debounce(func: Function, wait: number): Function {
-        let previousTimeoutPromise;
+        let previousTimeoutPromise: ng.IPromise<any>;
         
-        return (...args) => {
+        return (...args: any[]) => {
             if(previousTimeoutPromise) {
                 this.$timeout.cancel(previousTimeoutPromise);
             }
