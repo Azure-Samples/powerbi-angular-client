@@ -8,10 +8,10 @@ module.exports = {
     path: __dirname + "/webpack",
     filename: '[name].js'
   },
-  externals: [
-    'angular',
-    'powerbi-client'
-  ],
+  externals: {
+    'angular': 'angular',
+    'powerbi-client': "window['powerbi-client']"
+  },
   devtool: 'source-map',
   resolve: {
     extensions: ['', '.webpack.js', '.web.js', '.ts', '.js']
