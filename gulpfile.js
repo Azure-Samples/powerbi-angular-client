@@ -16,7 +16,7 @@ gulp.task('build', function (done) {
 });
 
 gulp.task('compile:watch', 'Watch sources', function () {
-    gulp.watch(['./app/**/*.ts', './app/**/*.html'], ['compile:src', 'templates']);
+    gulp.watch(['./app/**/*.ts', './app/**/*.html'], ['compile:src', 'templates', 'replace']);
 });
 
 gulp.task('compile:src', 'Compile typescript for library', function() {
