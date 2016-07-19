@@ -25,7 +25,7 @@
           <div class="form-group">
             <input class="form-control" disabled placeholder="N/A" />
           </div>
-          <button type="button" class="btn btn-warning" ng-click="vm.removeAllReportFiltersClicked()">Remove All Filters at Report Level</button>
+          <button type="button" class="btn btn-warning btn-block" ng-click="vm.removeAllReportFiltersClicked()">Remove All Filters at Report Level</button>
         </form>
       </div>
       <div class="col-xs-4">
@@ -34,7 +34,7 @@
             <select id="removeAllFiltersPagesList" class="form-control" ng-options="page as page.displayName for page in vm.reportPages" ng-model="vm.selectedRemoveAllFilterPage">
             </select>
           </div>
-          <button type="button" class="btn btn-warning" ng-click="vm.removeAllPageFiltersClicked(vm.selectedRemoveAllFilterPage)">Remove All Filters at Page Level</button>
+          <button type="button" class="btn btn-warning btn-block" ng-click="vm.removeAllPageFiltersClicked(vm.selectedRemoveAllFilterPage)">Remove All Filters at Page Level</button>
         </form>
       </div>
       <div class="col-xs-4">
@@ -47,7 +47,7 @@
               <option value="visualId4">Visual Id 4</option>
             </select>
           </div>
-          <button type="button" class="btn btn-warning" ng-click="vm.removeAllVisualFiltersClicked()">Remove All Filters at Visual Level</button>
+          <button type="button" class="btn btn-warning btn-block" ng-click="vm.removeAllVisualFiltersClicked()">Remove All Filters at Visual Level</button>
         </form>
       </div>
     </div>
@@ -56,13 +56,13 @@
         <hr />
       </div>
       <div class="col-md-4">
-        <button type="button" class="btn btn-primary" ng-click="vm.predefinedFilter1Clicked()">Predefined Basic Report Filter</button>
+        <button type="button" class="btn btn-primary btn-block" ng-click="vm.predefinedFilter1Clicked()">Predefined Basic Report Filter</button>
         <p>Store > Name 'In' or 'Park'</p>
-        <button type="button" class="btn btn-primary" ng-click="vm.predefinedFilter2Clicked()">Predefined Advanced Report Filter</button>
+        <button type="button" class="btn btn-primary btn-block" ng-click="vm.predefinedFilter2Clicked()">Predefined Advanced Report Filter</button>
         <p>Store > Name contains 'Wash' or contains 'Park'</p>
       </div>
       <div class="col-md-4">
-        <button type="button" class="btn btn-primary" ng-click="vm.predefinedFIlter3Clicked()">Predefined Advanced Page Filter</button>
+        <button type="button" class="btn btn-primary btn-block" ng-click="vm.predefinedFIlter3Clicked()">Predefined Advanced Page Filter</button>
         <p>Store > Name contains 'Wash' or contains 'Park' (Page: District Monthly Sales)</p>
       </div>
       <div class="col-md-4">
