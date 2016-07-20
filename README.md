@@ -16,6 +16,7 @@ npm install -g typings gulp
 
 ### Install dependencies
 ```
+typings install
 npm install
 ```
 
