@@ -44,7 +44,7 @@ export default class controller {
                 filterPaneEnabled: false,
                 navContentPaneEnabled: true
             },
-            page: 'ReportSection2',
+            pageName: 'ReportSection2',
             filter
         });
     }
