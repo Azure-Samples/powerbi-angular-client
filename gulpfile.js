@@ -2,6 +2,7 @@ var gulp = require('gulp-help')(require('gulp')),
     $ = require('gulp-load-plugins')({ lazy: true }),
     config = require('./gulp/config')(),
     merge2 = require('merge2'),
+    moment = require('moment'),
     runSequence = require('run-sequence'),
     webpack = require('webpack-stream'),
     webpackConfig = require('./webpack.config')
@@ -13,6 +14,14 @@ gulp.task('build', function (done) {
         ['templates', 'replace'],
         done
     );
+});
+
+gulp.task('ghpages', 'Deploy application to gh-pages branch', function () {
+  return gulp.src(['./dist/**/*'])
+    .pipe($.ghPages({
+        force: true,
+        message: 'Update ' + moment().format('LLL')
+    }));
 });
 
 gulp.task('compile:watch', 'Watch sources', function () {
