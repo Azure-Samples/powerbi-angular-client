@@ -5,7 +5,7 @@
   <div class="col-md-9">
     <div class="row">
       <div class="col-xs-12">
-        <powerbi-component options="vm.embedConfiguration" id="reportcustomfilterpane" class="powerbi-container" on-embedded="vm.onEmbedded($embed)"></powerbi-component>
+        <powerbi-component options="vm.embedConfiguration" class="powerbi-container" on-embedded="vm.onEmbedded($embed)"></powerbi-component>
       </div>
     </div>
     <div class="row">
@@ -21,33 +21,33 @@
     </div>
     <div class="row">
       <div class="col-xs-4">
-        <form id="removeAllFiltersReportForm">
+        <form>
           <div class="form-group">
             <input class="form-control" disabled placeholder="N/A" />
           </div>
-          <button type="button" class="btn btn-warning btn-block" ng-click="vm.removeAllReportFiltersClicked()">Remove All Filters at Report Level</button>
+          <button type="button" class="btn btn-warning btn-block" ng-click="vm.removeReportFiltersClicked()">Remove All Filters at Report Level</button>
         </form>
       </div>
       <div class="col-xs-4">
-        <form id="removeAllFiltersPageForm">
+        <form>
           <div class="form-group">
-            <select id="removeAllFiltersPagesList" class="form-control" ng-options="page as page.displayName for page in vm.reportPages" ng-model="vm.selectedRemoveAllFilterPage">
+            <select class="form-control" ng-options="page as page.displayName for page in vm.reportPages" ng-model="vm.selectedRemoveFiltersPage">
             </select>
           </div>
-          <button type="button" class="btn btn-warning btn-block" ng-click="vm.removeAllPageFiltersClicked(vm.selectedRemoveAllFilterPage)">Remove All Filters at Page Level</button>
+          <button type="button" class="btn btn-warning btn-block" ng-click="vm.removePageFiltersClicked(vm.selectedRemoveFiltersPage)">Remove All Filters at Page Level</button>
         </form>
       </div>
       <div class="col-xs-4">
-        <form id="removeAllFiltersVisualForm">
+        <form>
           <div class="form-group">
-            <select id="removeAllFiltersVisualsList" class="form-control">
+            <select class="form-control">
               <option value="visualId1">Visual Id 1</option>
               <option value="visualId2">Visual Id 2</option>
               <option value="visualId3">Visual Id 3</option>
               <option value="visualId4">Visual Id 4</option>
             </select>
           </div>
-          <button type="button" class="btn btn-warning btn-block" ng-click="vm.removeAllVisualFiltersClicked()">Remove All Filters at Visual Level</button>
+          <button type="button" class="btn btn-warning btn-block" ng-click="vm.removeVisualFiltersClicked()">Remove All Filters at Visual Level</button>
         </form>
       </div>
     </div>
@@ -57,7 +57,7 @@
       </div>
       <div class="col-md-4">
         <button type="button" class="btn btn-primary btn-block" ng-click="vm.predefinedFilter1Clicked()">Predefined Basic Report Filter</button>
-        <p>Store > Name 'In' or 'Park'</p>
+        <p>Store > Name Contains Direct</p>
         <button type="button" class="btn btn-primary btn-block" ng-click="vm.predefinedFilter2Clicked()">Predefined Advanced Report Filter</button>
         <p>Store > Name contains 'Wash' or contains 'Park'</p>
       </div>
@@ -71,6 +71,11 @@
     </div>
   </div>
   <div class="col-md-3">
-    <powerbi-filter-pane pages="vm.reportPages" on-add-filter="vm.onFilterAdded($filter, $target)"></powerbi-filter-pane>
+    <powerbi-filter-pane
+      report="vm.report"
+      pages="vm.reportPages"
+      on-add-filter="vm.onFilterAdded($filter, $target)"
+    >
+    </powerbi-filter-pane>
   </div>
 </div>

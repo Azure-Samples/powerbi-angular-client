@@ -6,11 +6,11 @@ export default class controller {
     $scope: ng.IScope;
     $interval: ng.IIntervalService;
 
-    activePage: pbi.models.IPage;
+    activePage: pbi.Page;
     cycleIntervalPromise: ng.IPromise<void>;
     cycleIsEnabled = false;
     embedConfiguration: pbi.IEmbedConfiguration;
-    pages: pbi.models.IPage[];
+    pages: pbi.Page[];
     report: pbi.Report;
     title: string;
 
@@ -56,8 +56,8 @@ export default class controller {
         this.changePage(true);
     }
 
-    pageClicked(page: pbi.models.IPage) {
-        this.report.setPage(page.name);
+    pageClicked(page: pbi.Page) {
+        page.setActive();
     }
 
     previousPageClicked() {
@@ -81,7 +81,7 @@ export default class controller {
                 });
         });
 
-        report.on<{ newPage: pbi.models.IPage }>('pageChanged', event => {
+        report.on<{ newPage: pbi.Page }>('pageChanged', event => {
             const page = event.detail.newPage;
             this.$scope.$apply(() => {
                 this.updateActivePage(page);
@@ -89,7 +89,7 @@ export default class controller {
         });
     }
 
-    updateActivePage(newPage: pbi.models.IPage) {
+    updateActivePage(newPage: pbi.Page) {
         this.activePage = newPage;
     }
 
@@ -120,7 +120,7 @@ export default class controller {
         this.pages
             .some((page, i) => {
                 if(activePageIndex === i) {
-                    this.report.setPage(page.name);
+                    page.setActive();
                     return true;
                 }
             });

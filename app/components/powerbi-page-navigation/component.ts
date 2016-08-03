@@ -2,13 +2,13 @@ import * as pbi from 'powerbi-client';
 
 export class Controller {
     private $scope: ng.IScope;
-    activePage: pbi.models.IPage;
+    activePage: pbi.Page;
     cycleIsEnabled = false;
     onCycleClicked: Function;
     onNextClicked: Function;
     onPageClicked: Function;
     onPreviousClicked: Function;
-    pages: pbi.models.IPage[];
+    pages: pbi.Page[];
     
     static $inject = [
         '$scope'
@@ -29,7 +29,7 @@ export class Controller {
         this.onNextClicked();
     }
 
-    pageClicked(page: pbi.models.IPage) {
+    pageClicked(page: pbi.Page) {
         this.onPageClicked({ $page: page });
     }
 
