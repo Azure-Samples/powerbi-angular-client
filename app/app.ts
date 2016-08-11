@@ -21,7 +21,7 @@ import filterPaneComponent from './components/powerbi-filter-pane/component';
 config['$inject'] = ["$stateProvider", "$urlRouterProvider", "ReportsServiceProvider"];
 function config($stateProvider: angularuirouter.IStateProvider, $urlRouterProvider: angularuirouter.IUrlRouterProvider, ReportsServiceProvider: any) {
     
-    ReportsServiceProvider.setBaseUrl('http://powerbipaasapi.azurewebsites.net/');
+    ReportsServiceProvider.setBaseUrl('https://powerbiembedapi.azurewebsites.net');
     
     $urlRouterProvider.otherwise('/scenario1');
 

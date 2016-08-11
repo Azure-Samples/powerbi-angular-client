@@ -3,7 +3,7 @@ import * as angularuirouter from 'angular-ui-router';
 import { ReportsService } from '../services/reports';
 
 const modelResolver = (ReportsService: ReportsService): ng.IPromise<pbi.IEmbedConfiguration> => {
-    return ReportsService.findById('5dac7a4a-4452-46b3-99f6-a25915e0fe55');
+    return ReportsService.findById('c4d31ef0-7b34-4d80-9bcb-5974d1405572', true);
 };
 modelResolver["$inject"] = ['ReportsService'];
 

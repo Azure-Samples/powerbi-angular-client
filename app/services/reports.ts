@@ -20,8 +20,10 @@ export class ReportsService {
             ;
     }
     
-    findById(id: string): ng.IPromise<pbi.IEmbedConfiguration> {
-        return this.$http.get(`${this.baseUrl}/api/reports/${id}`)
+    findById(id: string, dxt: boolean = false): ng.IPromise<pbi.IEmbedConfiguration> {
+        const url = dxt ? `${this.baseUrl}/api/dxt/reports/${id}` : `${this.baseUrl}/api/reports/${id}`;
+
+        return this.$http.get(url)
             .then(response => response.data)
             .then(this.normalizeReport)
             ;
