@@ -4,6 +4,7 @@
   "description": "",
   "main": "dist/index.html",
   "scripts": {
+    "start": "gulp build && http-server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Microsoft Power BI Team",
@@ -20,6 +21,7 @@
     "gulp-plumber": "^1.1.0",
     "gulp-rename": "^1.2.2",
     "gulp-typescript": "^2.13.0",
+    "http-server": "^0.9.0",
     "merge2": "^1.0.2",
     "moment": "^2.14.1",
     "run-sequence": "^1.1.5",
