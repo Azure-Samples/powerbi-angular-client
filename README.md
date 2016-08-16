@@ -1,7 +1,10 @@
 # powerbi-angular-client
 Sample application which demonstrates using [angular-powerbi](https://github.com/Microsoft/PowerBI-Angular) library within Angular 1.x application.
 
-## Running this sample
+## View Live Demo
+[http://azure-samples.github.io/powerbi-angular-client](http://azure-samples.github.io/powerbi-angular-client)
+
+## Running this sample locally
 
 ### Clone the repository
 
