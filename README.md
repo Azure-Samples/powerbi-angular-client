@@ -9,25 +9,20 @@ Sample application which demonstrates using [angular-powerbi](https://github.com
 git clone https://github.com/Azure-Samples/powerbi-angular-client
 ```
 
-### Install global dependencies if needed
-```
-npm install -g typings gulp
-```
-
 ### Install dependencies
 ```
-typings install
 npm install
 ```
 
 ### Run Build
 ```
-gulp build
+npm build
 ```
 
 ### Serve the files from the root of the repository:
-
-  Example: `http-server`
+```
+npm start
+```
   
 ### Open `dist/index.html` within the browser:
 
