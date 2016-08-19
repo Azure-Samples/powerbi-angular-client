@@ -114,3 +114,37 @@
     <button type="submit" class="btn btn-success">Add Filter</button>
   </div>
 </form>
+
+<div id="appliedFilters">
+  <h2>Applied Filters</h2>
+  <p>
+    <button type="button" class="btn btn-success" ng-click="vm.refreshClicked()">Refresh</button>
+  </p>
+
+  <h3>Report Level</h3>
+  <p>{{vm.filtersNode.name}}</p>
+  <div class="filters">
+    <div class="filter" ng-repeat="filter in vm.filtersNode.filters">
+      <button class="btn btn-danger filter__remove" ng-click="vm.remove(filter, vm.filtersNode.name)">&times;</button>
+      <div class="filter__text">
+        {{filter | json}}
+      </div>
+    </div>
+  </div>
+
+  <h3>Page Level</h3>
+  <div ng-repeat="node in vm.filtersNode.nodes">
+    <h4>{{node.name}}</h4>
+    <div class="filters">
+      <div class="filter" ng-repeat="filter in node.filters">
+        <button class="btn btn-danger filter__remove" ng-click="vm.remove(filter, node.name)">&times;</button>
+        <div class="filter__text">
+          {{filter | json}}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Visual Level</h3>
+  <p>N/A</p>
+</div>

@@ -74,7 +74,10 @@
     <powerbi-filter-pane
       report="vm.report"
       pages="vm.reportPages"
+      filters-node="vm.filtersNode"
       on-add-filter="vm.onFilterAdded($filter, $target)"
+      on-refresh-filters="vm.onRefreshFilters()"
+      on-remove-filter="vm.onRemoveFilter($filter, $filterableName)"
     >
     </powerbi-filter-pane>
   </div>

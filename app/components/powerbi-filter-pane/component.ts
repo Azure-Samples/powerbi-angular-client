@@ -1,9 +1,17 @@
 import * as pbi from 'powerbi-client';
 
+interface IFiltersNode {
+  name: string;
+  filterable: any;
+  filters: (pbi.models.IBasicFilter | pbi.models.IAdvancedFilter)[];
+  nodes: IFiltersNode[];
+}
+
 export class Controller {
   private $scope: ng.IScope;
   onAddFilter: Function;
-
+  onRefreshFilters: Function;
+  onRemoveFilter: Function;
   report: pbi.Report;
   reportTargets: string[] = [
     "Report",
@@ -67,6 +75,7 @@ export class Controller {
   hierarchy: string;
   hierarchyLevel: string;
   measure: string;
+  filtersNode: IFiltersNode;
 
   static $inject = [
     '$scope'
@@ -86,6 +95,14 @@ export class Controller {
         this.selectedPage = pages[0];
       }
     });
+
+    this.$scope.$watch(() => this.filtersNode, (filtersNode, oldFiltersNode) => {
+      if (filtersNode === oldFiltersNode) {
+        return;
+      }
+
+      console.log('filtersNode changed');
+    }, true);
   }
 
   onSubmit() {
@@ -107,6 +124,22 @@ export class Controller {
     }
 
     this.onAddFilter({ $filter: filter.toJSON(), $target: data.filterable });
+  }
+
+  refreshClicked() {
+    console.log('refresh');
+    this.onRefreshFilters();
+  }
+
+  remove(filter: pbi.models.IFilter, filterableName: string) {
+    console.log('remove');
+    this.onRemoveFilter({
+      $filter: filter,
+      $filterableName: filterableName
+    })
+      .then(() => {
+        console.log('filter removed');
+      });
   }
   
   private getFilterTypeTarget() {
@@ -173,7 +206,10 @@ export default class Directive {
   templateUrl = "/app/components/powerbi-filter-pane/template.html";
   scope = {
     pages: "=",
-    onAddFilter: "&"
+    filtersNode: "=",
+    onAddFilter: "&",
+    onRefreshFilters: "&",
+    onRemoveFilter: "&"
   };
   controller = Controller;
   bindToController = true;
