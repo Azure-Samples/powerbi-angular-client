@@ -16,11 +16,11 @@ export default class controller {
         '$scope',
         'scenario6model'
     ];
-    
+
     constructor(
-      $q: ng.IQService,
-      $scope: ng.IScope,
-      embedConfiguration: pbi.IEmbedConfiguration
+        $q: ng.IQService,
+        $scope: ng.IScope,
+        embedConfiguration: pbi.IEmbedConfiguration
     ) {
         this.$q = $q;
         this.$scope = $scope;
@@ -35,23 +35,23 @@ export default class controller {
     }
 
     onEmbedded(report: pbi.Report) {
-      console.log('embedded settings report');
-      this.report = report;
+        console.log('embedded settings report');
+        this.report = report;
     }
 
     toggleFilterPaneClicked() {
-      console.log('toggleFilterPaneClicked');
-      this.filterPaneEnabled = !this.filterPaneEnabled;
-      this.report.updateSettings({
-        filterPaneEnabled: this.filterPaneEnabled
-      });
+        console.log('toggleFilterPaneClicked');
+        this.filterPaneEnabled = !this.filterPaneEnabled;
+        this.report.updateSettings({
+            filterPaneEnabled: this.filterPaneEnabled
+        });
     }
 
     toggleNavContentPaneClicked() {
-      console.log('toggleNavContentPaneClicked');
-      this.navContentPaneEnabled = !this.navContentPaneEnabled;
-      this.report.updateSettings({
-        navContentPaneEnabled: this.navContentPaneEnabled
-      });
+        console.log('toggleNavContentPaneClicked');
+        this.navContentPaneEnabled = !this.navContentPaneEnabled;
+        this.report.updateSettings({
+            navContentPaneEnabled: this.navContentPaneEnabled
+        });
     }
 }

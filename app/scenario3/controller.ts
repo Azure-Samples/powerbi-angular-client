@@ -21,13 +21,13 @@ export default class controller {
         'scenario3model',
         'PowerBiService'
     ];
-    
+
     constructor(
-      $q: ng.IQService,
-      $scope: ng.IScope,
-      $interval: ng.IIntervalService,
-      embedConfiguration: pbi.IEmbedConfiguration,
-      powerBiService: pbi.service.Service
+        $q: ng.IQService,
+        $scope: ng.IScope,
+        $interval: ng.IIntervalService,
+        embedConfiguration: pbi.IEmbedConfiguration,
+        powerBiService: pbi.service.Service
     ) {
         this.$q = $q;
         this.$scope = $scope;
@@ -71,7 +71,7 @@ export default class controller {
                 .then(pages => {
                     this.$scope.$apply(() => {
                         this.pages = pages;
-                        if(pages.length > 0) {
+                        if (pages.length > 0) {
                             this.activePage = pages[0];
                         }
                     });
@@ -92,31 +92,31 @@ export default class controller {
 
     private changePage(forwards: boolean = false) {
         let activePageIndex = -1;
-    	this.pages
+        this.pages
             .some((page, i) => {
-                if(page.name === this.activePage.name) {
+                if (page.name === this.activePage.name) {
                     activePageIndex = i;
                     return true;
                 }
             });
 
-        if(forwards) {
+        if (forwards) {
             activePageIndex += 1;
         }
         else {
-        activePageIndex -= 1;
+            activePageIndex -= 1;
         }
 
-        if(activePageIndex > this.pages.length - 1) {
+        if (activePageIndex > this.pages.length - 1) {
             activePageIndex = 0;
         }
-        if(activePageIndex < 0) {
+        if (activePageIndex < 0) {
             activePageIndex = this.pages.length - 1;
         }
 
         this.pages
             .some((page, i) => {
-                if(activePageIndex === i) {
+                if (activePageIndex === i) {
                     page.setActive();
                     return true;
                 }
@@ -124,7 +124,7 @@ export default class controller {
     }
 
     private toggleCycle() {
-        if(this.cycleIsEnabled) {
+        if (this.cycleIsEnabled) {
             this.cycleIsEnabled = false;
             this.$interval.cancel(this.cycleIntervalPromise);
         }

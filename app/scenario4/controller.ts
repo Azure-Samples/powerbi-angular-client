@@ -2,17 +2,17 @@ import * as pbi from 'powerbi-client';
 import * as angularPbi from 'angular-powerbi';
 
 interface IFiltersNode {
-  name: string;
-  filterable: any;
-  filters: pbi.models.IFilter[];
-  nodes: IFiltersNode[];
+    name: string;
+    filterable: any;
+    filters: pbi.models.IFilter[];
+    nodes: IFiltersNode[];
 }
 
 export default class Controller {
     static predefinedFilter1 = new pbi.models.AdvancedFilter({
         table: "Store",
         column: "Name"
-        }, "Or", 
+    }, "Or",
         {
             operator: "Contains",
             value: "Direct"
@@ -25,7 +25,7 @@ export default class Controller {
     static predefinedFilter2 = new pbi.models.AdvancedFilter({
         table: "Store",
         column: "Name"
-        }, "Or", 
+    }, "Or",
         {
             operator: "Contains",
             value: "Wash"
@@ -38,7 +38,7 @@ export default class Controller {
     static predefinedFilter3 = new pbi.models.AdvancedFilter({
         table: "Store",
         column: "Name"
-        }, "Or", 
+    }, "Or",
         {
             operator: "Contains",
             value: "Wash"
@@ -64,12 +64,12 @@ export default class Controller {
         'scenario4model',
         'PowerBiService'
     ];
-    
+
     constructor(
-      $q: ng.IQService,
-      $scope: ng.IScope,
-      embedConfiguration: pbi.IEmbedConfiguration,
-      powerBiService: pbi.service.Service
+        $q: ng.IQService,
+        $scope: ng.IScope,
+        embedConfiguration: pbi.IEmbedConfiguration,
+        powerBiService: pbi.service.Service
     ) {
         this.$q = $q;
         this.$scope = $scope;
@@ -109,7 +109,7 @@ export default class Controller {
     onFilterAdded(filter: pbi.models.IBasicFilter | pbi.models.IAdvancedFilter, filterable: pbi.IFilterable) {
         console.log('onFilterAdded');
         console.log(filter, filterable);
-        
+
         filterable.setFilters([filter]);
     }
 
@@ -147,7 +147,7 @@ export default class Controller {
 
         Promise.all(pageNodePromises)
             .then(() => {
-                this.$scope.$apply(() => {});
+                this.$scope.$apply(() => { });
             });
     }
 
@@ -183,8 +183,8 @@ export default class Controller {
                 let index = -1;
                 filters.some((filter, i) => {
                     if (this.areFiltersEqual(filter, filterToRemove)) {
-                    index = i;
-                    return true; 
+                        index = i;
+                        return true;
                     }
                 });
 
@@ -258,12 +258,12 @@ export default class Controller {
         }
 
         const areTargetsEqual = filterATarget.table === filterBTarget.table
-                && filterATarget.column === filterBTarget.column
-                && filterATarget.hierarchy === filterBTarget.hierarchy
-                && filterATarget.hierarchyLevel === filterBTarget.hierarchyLevel
-                && filterATarget.measure === filterBTarget.measure
-                ;
-        
+            && filterATarget.column === filterBTarget.column
+            && filterATarget.hierarchy === filterBTarget.hierarchy
+            && filterATarget.hierarchyLevel === filterBTarget.hierarchyLevel
+            && filterATarget.measure === filterBTarget.measure
+            ;
+
         if (!areTargetsEqual) {
             return false;
         }
