@@ -7,7 +7,9 @@
     "build": "gulp build",
     "start": "gulp build && http-server",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prepublish": "typings install"
+    "prepublish": "typings install",
+    "gulp": "gulp",
+    "typings": "typings"
   },
   "author": "Microsoft Power BI Team",
   "license": "MIT",
