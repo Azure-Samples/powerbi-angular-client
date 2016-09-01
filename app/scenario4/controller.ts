@@ -231,8 +231,8 @@ export default class Controller {
     }
 
     private areFiltersEqual(
-        filterA: (pbi.models.IAdvancedFilter | pbi.models.IBasicFilter),
-        filterB: (pbi.models.IAdvancedFilter | pbi.models.IBasicFilter)
+        filterA: pbi.models.IFilter,
+        filterB: pbi.models.IFilter
     ) {
         let filterAType = pbi.models.getFilterType(filterA);
         let filterATarget: any = filterA.target;
