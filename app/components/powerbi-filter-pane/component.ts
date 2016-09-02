@@ -205,6 +205,7 @@ export default class Directive {
   restrict = "E";
   templateUrl = "/app/components/powerbi-filter-pane/template.html";
   scope = {
+    report: "=",
     pages: "=",
     filtersNode: "=",
     onAddFilter: "&",
