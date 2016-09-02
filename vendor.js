@@ -36047,7 +36047,7 @@ angular.module('ui.router.state')
   .filter('isState', $IsStateFilter)
   .filter('includedByState', $IncludedByStateFilter);
 })(window, window.angular);
-/*! powerbi-client v2.0.0-beta.12 | (c) 2016 Microsoft Corporation MIT */
+/*! powerbi-client v2.1.0 | (c) 2016 Microsoft Corporation MIT */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -36106,13 +36106,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var service = __webpack_require__(1);
 	exports.service = service;
-	var factories = __webpack_require__(9);
+	var factories = __webpack_require__(10);
 	exports.factories = factories;
 	var models = __webpack_require__(4);
 	exports.models = models;
 	var report_1 = __webpack_require__(5);
 	exports.Report = report_1.Report;
-	var tile_1 = __webpack_require__(8);
+	var tile_1 = __webpack_require__(9);
 	exports.Tile = tile_1.Tile;
 	var embed_1 = __webpack_require__(2);
 	exports.Embed = embed_1.Embed;
@@ -36121,12 +36121,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	var visual_1 = __webpack_require__(7);
 	exports.Visual = visual_1.Visual;
 	/**
-	 * Make PowerBi available on global object for use in apps without module loading support.
-	 * Save class to allow creating an instance of the service.
-	 * Create instance of class with default config for normal usage.
+	 * Makes Power BI available to the global object for use in applications that don't have module loading support.
+	 *
+	 * Note: create an instance of the class with the default configuration for normal usage, or save the class so that you can create an instance of the service.
 	 */
-	window.Powerbi = service.Service;
-	window.powerbi = new service.Service(factories.hpmFactory, factories.wpmpFactory, factories.routerFactory);
+	var powerbi = new service.Service(factories.hpmFactory, factories.wpmpFactory, factories.routerFactory);
+	window.powerbi = powerbi;
 
 
 /***/ },
@@ -36135,10 +36135,26 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var embed = __webpack_require__(2);
 	var report_1 = __webpack_require__(5);
-	var tile_1 = __webpack_require__(8);
+	var dashboard_1 = __webpack_require__(8);
+	var tile_1 = __webpack_require__(9);
 	var page_1 = __webpack_require__(6);
 	var utils = __webpack_require__(3);
+	/**
+	 * The Power BI Service embed component, which is the entry point to embed all other Power BI components into your application
+	 *
+	 * @export
+	 * @class Service
+	 * @implements {IService}
+	 */
 	var Service = (function () {
+	    /**
+	     * Creates an instance of a Power BI Service.
+	     *
+	     * @param {IHpmFactory} hpmFactory The http post message factory used in the postMessage communication layer
+	     * @param {IWpmpFactory} wpmpFactory The window post message factory used in the postMessage communication layer
+	     * @param {IRouterFactory} routerFactory The router factory used in the postMessage communication layer
+	     * @param {IServiceConfiguration} [config={}]
+	     */
 	    function Service(hpmFactory, wpmpFactory, routerFactory, config) {
 	        var _this = this;
 	        if (config === void 0) { config = {}; }
@@ -36146,7 +36162,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.hpm = hpmFactory(this.wpmp, null, config.version, config.type);
 	        this.router = routerFactory(this.wpmp);
 	        /**
-	         * Add handler for report events
+	         * Adds handler for report events.
 	         */
 	        this.router.post("/reports/:uniqueId/events/:eventName", function (req, res) {
 	            var event = {
@@ -36175,6 +36191,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	            };
 	            _this.handleEvent(event);
 	        });
+	        this.router.post("/dashboards/:uniqueId/events/:eventName", function (req, res) {
+	            var event = {
+	                type: 'dashboard',
+	                id: req.params.uniqueId,
+	                name: req.params.eventName,
+	                value: req.body
+	            };
+	            _this.handleEvent(event);
+	        });
 	        this.embeds = [];
 	        // TODO: Change when Object.assign is available.
 	        this.config = utils.assign({}, Service.defaultConfig, config);
@@ -36183,9 +36208,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    }
 	    /**
-	     * Handler for DOMContentLoaded which searches DOM for elements having 'powerbi-embed-url' attribute
-	     * and automatically attempts to embed a powerbi component based on information from the attributes.
-	     * Only runs if `config.autoEmbedOnContentLoaded` is true when the service is created.
+	     * TODO: Add a description here
+	     *
+	     * @param {HTMLElement} [container]
+	     * @param {embed.IEmbedConfiguration} [config=undefined]
+	     * @returns {embed.Embed[]}
 	     */
 	    Service.prototype.init = function (container, config) {
 	        var _this = this;
@@ -36195,9 +36222,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return elements.map(function (element) { return _this.embed(element, config); });
 	    };
 	    /**
-	     * Given an html element embed component based on configuration.
-	     * If component has already been created and attached to element re-use component instance and existing iframe,
-	     * otherwise create a new component instance
+	     * Given a configuration based on an HTML element,
+	     * if the component has already been created and attached to the element, reuses the component instance and existing iframe,
+	     * otherwise creates a new component instance.
+	     *
+	     * @param {HTMLElement} element
+	     * @param {embed.IEmbedConfiguration} [config={}]
+	     * @returns {embed.Embed}
 	     */
 	    Service.prototype.embed = function (element, config) {
 	        if (config === void 0) { config = {}; }
@@ -36212,15 +36243,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return component;
 	    };
 	    /**
-	     * Given an html element embed component base configuration.
-	     * Save component instance on element for later lookup.
+	     * Given a configuration based on a Power BI element, saves the component instance that reference the element for later lookup.
+	     *
+	     * @private
+	     * @param {IPowerBiElement} element
+	     * @param {embed.IEmbedConfiguration} config
+	     * @returns {embed.Embed}
 	     */
 	    Service.prototype.embedNew = function (element, config) {
 	        var componentType = config.type || element.getAttribute(embed.Embed.typeAttribute);
 	        if (!componentType) {
 	            throw new Error("Attempted to embed using config " + JSON.stringify(config) + " on element " + element.outerHTML + ", but could not determine what type of component to embed. You must specify a type in the configuration or as an attribute such as '" + embed.Embed.typeAttribute + "=\"" + report_1.Report.type.toLowerCase() + "\"'.");
 	        }
-	        // Save type on configuration so it can be referenced later at known location
+	        // Saves the type as part of the configuration so that it can be referenced later at a known location.
 	        config.type = componentType;
 	        var Component = utils.find(function (component) { return componentType === component.type.toLowerCase(); }, Service.components);
 	        if (!Component) {
@@ -36232,7 +36267,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return component;
 	    };
 	    /**
-	     * Given and element which arleady contains embed, load with new configuration
+	     * Given an element that already contains an embed component, load with a new configuration.
+	     *
+	     * @private
+	     * @param {IPowerBiElement} element
+	     * @param {embed.IEmbedConfiguration} config
+	     * @returns {embed.Embed}
 	     */
 	    Service.prototype.embedExisting = function (element, config) {
 	        var component = utils.find(function (x) { return x.element === element; }, this.embeds);
@@ -36243,16 +36283,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return component;
 	    };
 	    /**
-	     * Adds event handler for DOMContentLoaded which finds all elements in DOM with attribute powerbi-embed-url
-	     * then attempts to initiate the embed process based on data from other powerbi-* attributes.
-	     * (This is usually only useful for applications rendered on by the server since all the data needed will be available by the time the handler is called.)
+	     * Adds an event handler for DOMContentLoaded, which searches the DOM for elements that have the 'powerbi-embed-url' attribute,
+	     * and automatically attempts to embed a powerbi component based on information from other powerbi-* attributes.
+	     *
+	     * Note: Only runs if `config.autoEmbedOnContentLoaded` is true when the service is created.
+	     * This handler is typically useful only for applications that are rendered on the server so that all required data is available when the handler is called.
 	     */
 	    Service.prototype.enableAutoEmbed = function () {
 	        var _this = this;
 	        window.addEventListener('DOMContentLoaded', function (event) { return _this.init(document.body); }, false);
 	    };
 	    /**
-	     * Returns instance of component associated with element.
+	     * Returns an instance of the component associated with the element.
+	     *
+	     * @param {HTMLElement} element
+	     * @returns {(Report | Tile)}
 	     */
 	    Service.prototype.get = function (element) {
 	        var powerBiElement = element;
@@ -36262,31 +36307,40 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return powerBiElement.powerBiEmbed;
 	    };
 	    /**
-	     * Find embed instance by name / unique id provided.
+	     * Finds an embed instance by the name or unique ID that is provided.
+	     *
+	     * @param {string} uniqueId
+	     * @returns {(Report | Tile)}
 	     */
 	    Service.prototype.find = function (uniqueId) {
 	        return utils.find(function (x) { return x.config.uniqueId === uniqueId; }, this.embeds);
 	    };
 	    /**
-	     * Given an html element which has component embedded within it, remove the component from list of embeds, remove association with component, and remove the iframe.
+	     * Given an HTML element that has a component embedded within it, removes the component from the list of embedded components, removes the association between the element and the component, and removes the iframe.
+	     *
+	     * @param {HTMLElement} element
+	     * @returns {void}
 	     */
 	    Service.prototype.reset = function (element) {
 	        var powerBiElement = element;
 	        if (!powerBiElement.powerBiEmbed) {
 	            return;
 	        }
-	        /** Remove component from internal list */
+	        /** Removes the component from an internal list of components. */
 	        utils.remove(function (x) { return x === powerBiElement.powerBiEmbed; }, this.embeds);
-	        /** Delete property from html element */
+	        /** Deletes a property from the HTML element. */
 	        delete powerBiElement.powerBiEmbed;
-	        /** Remove iframe from element */
+	        /** Removes the iframe from the element. */
 	        var iframe = element.querySelector('iframe');
 	        if (iframe) {
 	            iframe.remove();
 	        }
 	    };
 	    /**
-	     * Given an event object, find embed with matching type and id and invoke its handleEvent method with event.
+	     * Given an event object, finds the embed component with the matching type and ID, and invokes its handleEvent method with the event object.
+	     *
+	     * @private
+	     * @param {IEvent<any>} event
 	     */
 	    Service.prototype.handleEvent = function (event) {
 	        var embed = utils.find(function (embed) {
@@ -36307,14 +36361,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    };
 	    /**
-	     * List of components this service can embed.
+	     * A list of components that this service can embed
 	     */
 	    Service.components = [
 	        tile_1.Tile,
-	        report_1.Report
+	        report_1.Report,
+	        dashboard_1.Dashboard
 	    ];
 	    /**
-	     * Default configuration for service.
+	     * The default configuration for the service
 	     */
 	    Service.defaultConfig = {
 	        autoEmbedOnContentLoaded: false,
@@ -36337,10 +36392,23 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var utils = __webpack_require__(3);
 	var models = __webpack_require__(4);
+	/**
+	 * Base class for all Power BI embed components
+	 *
+	 * @export
+	 * @abstract
+	 * @class Embed
+	 */
 	var Embed = (function () {
 	    /**
-	     * Note: there is circular reference between embeds and service
-	     * The service has list of all embeds on the host page, and each embed has reference to the service that created it.
+	     * Creates an instance of Embed.
+	     *
+	     * Note: there is circular reference between embeds and the service, because
+	     * the service has a list of all embeds on the host page, and each embed has a reference to the service that created it.
+	     *
+	     * @param {service.Service} service
+	     * @param {HTMLElement} element
+	     * @param {IEmbedConfiguration} config
 	     */
 	    function Embed(service, element, config) {
 	        var _this = this;
@@ -36381,24 +36449,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * })
 	     *   .catch(error => { ... });
 	     * ```
+	     *
+	     * @param {models.ILoadConfiguration} config
+	     * @returns {Promise<void>}
 	     */
 	    Embed.prototype.load = function (config) {
+	        var _this = this;
 	        var errors = models.validateLoad(config);
 	        if (errors) {
 	            throw errors;
 	        }
-	        return this.service.hpm.post('/report/load', config, { uid: this.config.uniqueId }, this.iframe.contentWindow)
+	        var loadPath = '/report/load';
+	        if (this.config && this.config.type === 'dashboard') {
+	            loadPath = '/dashboard/load';
+	        }
+	        return this.service.hpm.post(loadPath, config, { uid: this.config.uniqueId }, this.iframe.contentWindow)
 	            .then(function (response) {
+	            utils.assign(_this.config, config);
 	            return response.body;
 	        }, function (response) {
 	            throw response.body;
 	        });
 	    };
 	    /**
-	     * Removes event handler(s) from list of handlers.
-	     *
-	     * If reference to existing handle function is specified remove specific handler.
-	     * If handler is not specified, remove all handlers for the event name specified.
+	     * Removes one or more event handlers from the list of handlers.
+	     * If a reference to the existing handle function is specified, remove the specific handler.
+	     * If the handler is not specified, remove all handlers for the event name specified.
 	     *
 	     * ```javascript
 	     * report.off('pageChanged')
@@ -36411,6 +36487,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	     *
 	     * report.off('pageChanged', logHandler);
 	     * ```
+	     *
+	     * @template T
+	     * @param {string} eventName
+	     * @param {service.IEventHandler<T>} [handler]
 	     */
 	    Embed.prototype.off = function (eventName, handler) {
 	        var _this = this;
@@ -36430,13 +36510,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    };
 	    /**
-	     * Adds event handler for specific event.
+	     * Adds an event handler for a specific event.
 	     *
 	     * ```javascript
 	     * report.on('pageChanged', (event) => {
 	     *   console.log('PageChanged: ', event.page.name);
 	     * });
 	     * ```
+	     *
+	     * @template T
+	     * @param {string} eventName
+	     * @param {service.IEventHandler<T>} handler
 	     */
 	    Embed.prototype.on = function (eventName, handler) {
 	        if (this.allowedEvents.indexOf(eventName) === -1) {
@@ -36449,7 +36533,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.element.addEventListener(eventName, handler);
 	    };
 	    /**
-	     * Get access token from first available location: config, attribute, global.
+	     * Reloads embed using existing configuration.
+	     * E.g. For reports this effectively clears all filters and makes the first page active which simulates resetting a report back to loaded state.
+	     *
+	     * ```javascript
+	     * report.reload();
+	     * ```
+	     */
+	    Embed.prototype.reload = function () {
+	        return this.load(this.config);
+	    };
+	    /**
+	     * Gets an access token from the first available location: config, attribute, global.
+	     *
+	     * @private
+	     * @param {string} globalAccessToken
+	     * @returns {string}
 	     */
 	    Embed.prototype.getAccessToken = function (globalAccessToken) {
 	        var accessToken = this.config.accessToken || this.element.getAttribute(Embed.accessTokenAttribute) || globalAccessToken;
@@ -36459,7 +36558,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return accessToken;
 	    };
 	    /**
-	     * Get embed url from first available location: options, attribute.
+	     * Gets an embed url from the first available location: options, attribute.
+	     *
+	     * @private
+	     * @returns {string}
 	     */
 	    Embed.prototype.getEmbedUrl = function () {
 	        var embedUrl = this.config.embedUrl || this.element.getAttribute(Embed.embedUrlAttribute);
@@ -36469,21 +36571,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return embedUrl;
 	    };
 	    /**
-	     * Get unique id from first available location: options, attribute.
-	     * If neither is provided generate unique string.
+	     * Gets a unique ID from the first available location: options, attribute.
+	     * If neither is provided generate a unique string.
+	     *
+	     * @private
+	     * @returns {string}
 	     */
 	    Embed.prototype.getUniqueId = function () {
 	        return this.config.uniqueId || this.element.getAttribute(Embed.nameAttribute) || utils.createRandomString();
 	    };
 	    /**
-	     * Request the browser to make the component's iframe fullscreen.
+	     * Requests the browser to render the component's iframe in fullscreen mode.
 	     */
 	    Embed.prototype.fullscreen = function () {
 	        var requestFullScreen = this.iframe.requestFullscreen || this.iframe.msRequestFullscreen || this.iframe.mozRequestFullScreen || this.iframe.webkitRequestFullscreen;
 	        requestFullScreen.call(this.iframe);
 	    };
 	    /**
-	     * Exit fullscreen.
+	     * Requests the browser to exit fullscreen mode.
 	     */
 	    Embed.prototype.exitFullscreen = function () {
 	        if (!this.isFullscreen(this.iframe)) {
@@ -36493,8 +36598,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        exitFullscreen.call(document);
 	    };
 	    /**
-	     * Return true if iframe is fullscreen,
-	     * otherwise return false
+	     * Returns true if the iframe is rendered in fullscreen mode,
+	     * otherwise returns false.
+	     *
+	     * @private
+	     * @param {HTMLIFrameElement} iframe
+	     * @returns {boolean}
 	     */
 	    Embed.prototype.isFullscreen = function (iframe) {
 	        var options = ['fullscreenElement', 'webkitFullscreenElement', 'mozFullscreenScreenElement', 'msFullscreenElement'];
@@ -36517,6 +36626,14 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 3 */
 /***/ function(module, exports) {
 
+	/**
+	 * Raises a custom event with event data on the specified HTML element.
+	 *
+	 * @export
+	 * @param {HTMLElement} element
+	 * @param {string} eventName
+	 * @param {*} eventData
+	 */
 	function raiseCustomEvent(element, eventName, eventData) {
 	    var customEvent;
 	    if (typeof CustomEvent === 'function') {
@@ -36533,6 +36650,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    element.dispatchEvent(customEvent);
 	}
 	exports.raiseCustomEvent = raiseCustomEvent;
+	/**
+	 * Finds the index of the first value in an array that matches the specified predicate.
+	 *
+	 * @export
+	 * @template T
+	 * @param {(x: T) => boolean} predicate
+	 * @param {T[]} xs
+	 * @returns {number}
+	 */
 	function findIndex(predicate, xs) {
 	    if (!Array.isArray(xs)) {
 	        throw new Error("You attempted to call find with second parameter that was not an array. You passed: " + xs);
@@ -36547,6 +36673,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return index;
 	}
 	exports.findIndex = findIndex;
+	/**
+	 * Finds the first value in an array that matches the specified predicate.
+	 *
+	 * @export
+	 * @template T
+	 * @param {(x: T) => boolean} predicate
+	 * @param {T[]} xs
+	 * @returns {T}
+	 */
 	function find(predicate, xs) {
 	    var index = findIndex(predicate, xs);
 	    return xs[index];
@@ -36559,6 +36694,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.remove = remove;
 	// See: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
 	// TODO: replace in favor of using polyfill
+	/**
+	 * Copies the values of all enumerable properties from one or more source objects to a target object, and returns the target object.
+	 *
+	 * @export
+	 * @param {any} args
+	 * @returns
+	 */
 	function assign() {
 	    var args = [];
 	    for (var _i = 0; _i < arguments.length; _i++) {
@@ -36583,6 +36725,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return output;
 	}
 	exports.assign = assign;
+	/**
+	 * Generates a random 7 character string.
+	 *
+	 * @export
+	 * @returns {string}
+	 */
 	function createRandomString() {
 	    return (Math.random() + 1).toString(36).substring(7);
 	}
@@ -36593,7 +36741,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/*! powerbi-models v0.7.2 | (c) 2016 Microsoft Corporation MIT */
+	/*! powerbi-models v0.7.4 | (c) 2016 Microsoft Corporation MIT */
 	(function webpackUniversalModuleDefinition(root, factory) {
 		if(true)
 			module.exports = factory();
@@ -36655,12 +36803,14 @@ return /******/ (function(modules) { // webpackBootstrap
 		    function __() { this.constructor = d; }
 		    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 		};
+		/* tslint:disable:no-var-requires */
 		exports.advancedFilterSchema = __webpack_require__(1);
 		exports.filterSchema = __webpack_require__(2);
 		exports.loadSchema = __webpack_require__(3);
 		exports.pageSchema = __webpack_require__(4);
 		exports.settingsSchema = __webpack_require__(5);
 		exports.basicFilterSchema = __webpack_require__(6);
+		/* tslint:enable:no-var-requires */
 		var jsen = __webpack_require__(7);
 		function normalizeError(error) {
 		    if (!error.message) {
@@ -36804,23 +36954,28 @@ return /******/ (function(modules) { // webpackBootstrap
 		            throw new Error("logicalOperator must be a valid operator, You passed: " + logicalOperator);
 		        }
 		        this.logicalOperator = logicalOperator;
-		        if (conditions.length === 0) {
-		            throw new Error("conditions must be a non-empty array. You passed: " + conditions);
-		        }
-		        if (conditions.length > 2) {
-		            throw new Error("AdvancedFilters may not have more than two conditions. You passed: " + conditions.length);
-		        }
+		        var extractedConditions;
 		        /**
 		         * Accept conditions as array instead of as individual arguments
 		         * new AdvancedFilter('a', 'b', "And", { value: 1, operator: "Equals" }, { value: 2, operator: "IsGreaterThan" });
 		         * new AdvancedFilter('a', 'b', "And", [{ value: 1, operator: "Equals" }, { value: 2, operator: "IsGreaterThan" }]);
 		         */
 		        if (Array.isArray(conditions[0])) {
-		            this.conditions = conditions[0];
+		            extractedConditions = conditions[0];
 		        }
 		        else {
-		            this.conditions = conditions;
+		            extractedConditions = conditions;
 		        }
+		        if (extractedConditions.length === 0) {
+		            throw new Error("conditions must be a non-empty array. You passed: " + conditions);
+		        }
+		        if (extractedConditions.length > 2) {
+		            throw new Error("AdvancedFilters may not have more than two conditions. You passed: " + conditions.length);
+		        }
+		        if (extractedConditions.length === 1 && logicalOperator !== "And") {
+		            throw new Error("Logical Operator must be \"And\" when there is only one condition provided");
+		        }
+		        this.conditions = extractedConditions;
 		    }
 		    AdvancedFilter.prototype.toJSON = function () {
 		        var filter = _super.prototype.toJSON.call(this);
@@ -38102,7 +38257,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	/***/ function(module, exports) {
 	
 		// shim for using process in browser
-		
 		var process = module.exports = {};
 		
 		// cached from whatever global is present so that test runners that stub it
@@ -38114,21 +38268,63 @@ return /******/ (function(modules) { // webpackBootstrap
 		var cachedClearTimeout;
 		
 		(function () {
-		  try {
-		    cachedSetTimeout = setTimeout;
-		  } catch (e) {
-		    cachedSetTimeout = function () {
-		      throw new Error('setTimeout is not defined');
+		    try {
+		        cachedSetTimeout = setTimeout;
+		    } catch (e) {
+		        cachedSetTimeout = function () {
+		            throw new Error('setTimeout is not defined');
+		        }
 		    }
-		  }
-		  try {
-		    cachedClearTimeout = clearTimeout;
-		  } catch (e) {
-		    cachedClearTimeout = function () {
-		      throw new Error('clearTimeout is not defined');
+		    try {
+		        cachedClearTimeout = clearTimeout;
+		    } catch (e) {
+		        cachedClearTimeout = function () {
+		            throw new Error('clearTimeout is not defined');
+		        }
 		    }
-		  }
 		} ())
+		function runTimeout(fun) {
+		    if (cachedSetTimeout === setTimeout) {
+		        //normal enviroments in sane situations
+		        return setTimeout(fun, 0);
+		    }
+		    try {
+		        // when when somebody has screwed with setTimeout but no I.E. maddness
+		        return cachedSetTimeout(fun, 0);
+		    } catch(e){
+		        try {
+		            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+		            return cachedSetTimeout.call(null, fun, 0);
+		        } catch(e){
+		            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+		            return cachedSetTimeout.call(this, fun, 0);
+		        }
+		    }
+		
+		
+		}
+		function runClearTimeout(marker) {
+		    if (cachedClearTimeout === clearTimeout) {
+		        //normal enviroments in sane situations
+		        return clearTimeout(marker);
+		    }
+		    try {
+		        // when when somebody has screwed with setTimeout but no I.E. maddness
+		        return cachedClearTimeout(marker);
+		    } catch (e){
+		        try {
+		            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+		            return cachedClearTimeout.call(null, marker);
+		        } catch (e){
+		            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+		            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+		            return cachedClearTimeout.call(this, marker);
+		        }
+		    }
+		
+		
+		
+		}
 		var queue = [];
 		var draining = false;
 		var currentQueue;
@@ -38153,7 +38349,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		    if (draining) {
 		        return;
 		    }
-		    var timeout = cachedSetTimeout(cleanUpNextTick);
+		    var timeout = runTimeout(cleanUpNextTick);
 		    draining = true;
 		
 		    var len = queue.length;
@@ -38170,7 +38366,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		    }
 		    currentQueue = null;
 		    draining = false;
-		    cachedClearTimeout(timeout);
+		    runClearTimeout(timeout);
 		}
 		
 		process.nextTick = function (fun) {
@@ -38182,7 +38378,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		    }
 		    queue.push(new Item(fun, args));
 		    if (queue.length === 1 && !draining) {
-		        cachedSetTimeout(drainQueue, 0);
+		        runTimeout(drainQueue);
 		    }
 		};
 		
@@ -38863,8 +39059,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	var embed = __webpack_require__(2);
 	var utils = __webpack_require__(3);
 	var page_1 = __webpack_require__(6);
+	/**
+	 * The Power BI Report embed component
+	 *
+	 * @export
+	 * @class Report
+	 * @extends {embed.Embed}
+	 * @implements {IReportNode}
+	 * @implements {IFilterable}
+	 */
 	var Report = (function (_super) {
 	    __extends(Report, _super);
+	    /**
+	     * Creates an instance of a Power BI Report.
+	     *
+	     * @param {service.Service} service
+	     * @param {HTMLElement} element
+	     * @param {embed.IEmbedConfiguration} config
+	     */
 	    function Report(service, element, config) {
 	        var filterPaneEnabled = (config.settings && config.settings.filterPaneEnabled) || !(element.getAttribute(Report.filterPaneEnabledAttribute) === "false");
 	        var navContentPaneEnabled = (config.settings && config.settings.navContentPaneEnabled) || !(element.getAttribute(Report.navContentPaneEnabledAttribute) === "false");
@@ -38877,10 +39089,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        Array.prototype.push.apply(this.allowedEvents, Report.allowedEvents);
 	    }
 	    /**
-	     * This adds backwards compatibility for older config which used the reportId query param to specify report id.
-	     * E.g. http://embedded.powerbi.com/appTokenReportEmbed?reportId=854846ed-2106-4dc2-bc58-eb77533bf2f1
+	     * Adds backwards compatibility for the previous load configuration, which used the reportId query parameter to specify the report ID
+	     * (e.g. http://embedded.powerbi.com/appTokenReportEmbed?reportId=854846ed-2106-4dc2-bc58-eb77533bf2f1).
 	     *
-	     * By extracting the id we can ensure id is always explicitly provided as part of the load configuration.
+	     * By extracting the ID we can ensure that the ID is always explicitly provided as part of the load configuration.
+	     *
+	     * @static
+	     * @param {string} url
+	     * @returns {string}
 	     */
 	    Report.findIdFromEmbedUrl = function (url) {
 	        var reportIdRegEx = /reportId="?([^&]+)"?/;
@@ -38892,7 +39108,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return reportId;
 	    };
 	    /**
-	     * Get filters that are applied at the report level
+	     * Gets filters that are applied at the report level.
 	     *
 	     * ```javascript
 	     * // Get filters applied at report level
@@ -38901,6 +39117,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	     *     ...
 	     *   });
 	     * ```
+	     *
+	     * @returns {Promise<models.IFilter[]>}
 	     */
 	    Report.prototype.getFilters = function () {
 	        return this.service.hpm.get("/report/filters", { uid: this.config.uniqueId }, this.iframe.contentWindow)
@@ -38909,7 +39127,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 	    };
 	    /**
-	     * Get report id from first available location: options, attribute, embed url.
+	     * Gets the report ID from the first available location: options, attribute, embed url.
+	     *
+	     * @returns {string}
 	     */
 	    Report.prototype.getId = function () {
 	        var reportId = this.config.id || this.element.getAttribute(Report.reportIdAttribute) || Report.findIdFromEmbedUrl(this.config.embedUrl);
@@ -38919,7 +39139,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return reportId;
 	    };
 	    /**
-	     * Get the list of pages within the report
+	     * Gets the list of pages within the report.
 	     *
 	     * ```javascript
 	     * report.getPages()
@@ -38927,6 +39147,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	     *      ...
 	     *  });
 	     * ```
+	     *
+	     * @returns {Promise<Page[]>}
 	     */
 	    Report.prototype.getPages = function () {
 	        var _this = this;
@@ -38941,39 +39163,76 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 	    };
 	    /**
-	     * Create new Page instance.
+	     * Creates an instance of a Page.
 	     *
-	     * Normally you would get Page objects by calling `report.getPages()` but in the case
+	     * Normally you would get Page objects by calling `report.getPages()`, but in the case
 	     * that the page name is known and you want to perform an action on a page without having to retrieve it
 	     * you can create it directly.
 	     *
-	     * Note: Since you are creating the page manually there is no guarantee that the page actually exists in the report and the subsequence requests could fail.
+	     * Note: Because you are creating the page manually there is no guarantee that the page actually exists in the report, and subsequent requests could fail.
 	     *
 	     * ```javascript
 	     * const page = report.page('ReportSection1');
 	     * page.setActive();
 	     * ```
+	     *
+	     * @param {string} name
+	     * @param {string} [displayName]
+	     * @returns {Page}
 	     */
 	    Report.prototype.page = function (name, displayName) {
 	        return new page_1.Page(this, name, displayName);
 	    };
 	    /**
-	     * Remove all filters at report level
+	     * Prints the active page of the report by invoking `window.print()` on the embed iframe component.
+	     */
+	    Report.prototype.print = function () {
+	        return this.service.hpm.post('/report/print', null, { uid: this.config.uniqueId }, this.iframe.contentWindow)
+	            .then(function (response) {
+	            return response.body;
+	        })
+	            .catch(function (response) {
+	            throw response.body;
+	        });
+	    };
+	    /**
+	     * Refreshes data sources for the report.
+	     *
+	     * ```javascript
+	     * report.refresh();
+	     * ```
+	     */
+	    Report.prototype.refresh = function () {
+	        return this.service.hpm.post('/report/refresh', null, { uid: this.config.uniqueId }, this.iframe.contentWindow)
+	            .then(function (response) {
+	            return response.body;
+	        })
+	            .catch(function (response) {
+	            throw response.body;
+	        });
+	    };
+	    /**
+	     * Removes all filters at the report level.
 	     *
 	     * ```javascript
 	     * report.removeFilters();
 	     * ```
+	     *
+	     * @returns {Promise<void>}
 	     */
 	    Report.prototype.removeFilters = function () {
 	        return this.setFilters([]);
 	    };
 	    /**
-	     * Set the active page
+	     * Sets the active page of the report.
 	     *
 	     * ```javascript
 	     * report.setPage("page2")
 	     *  .catch(error => { ... });
 	     * ```
+	     *
+	     * @param {string} pageName
+	     * @returns {Promise<void>}
 	     */
 	    Report.prototype.setPage = function (pageName) {
 	        var page = {
@@ -38986,7 +39245,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 	    };
 	    /**
-	     * Sets filters
+	     * Sets filters at the report level.
 	     *
 	     * ```javascript
 	     * const filters: [
@@ -38998,6 +39257,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     *    ...
 	     *  });
 	     * ```
+	     *
+	     * @param {(models.IFilter[])} filters
+	     * @returns {Promise<void>}
 	     */
 	    Report.prototype.setFilters = function (filters) {
 	        return this.service.hpm.put("/report/filters", filters, { uid: this.config.uniqueId }, this.iframe.contentWindow)
@@ -39006,7 +39268,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 	    };
 	    /**
-	     * Update settings of report (filter pane visibility, page navigation visibility)
+	     * Updates visibility settings for the filter pane and the page navigation pane.
 	     *
 	     * ```javascript
 	     * const newSettings = {
@@ -39017,6 +39279,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * report.updateSettings(newSettings)
 	     *   .catch(error => { ... });
 	     * ```
+	     *
+	     * @param {models.ISettings} settings
+	     * @returns {Promise<void>}
 	     */
 	    Report.prototype.updateSettings = function (settings) {
 	        return this.service.hpm.patch('/report/settings', settings, { uid: this.config.uniqueId }, this.iframe.contentWindow)
@@ -39040,19 +39305,36 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	var visual_1 = __webpack_require__(7);
+	/**
+	 * A Power BI report page
+	 *
+	 * @export
+	 * @class Page
+	 * @implements {IPageNode}
+	 * @implements {IFilterable}
+	 */
 	var Page = (function () {
+	    /**
+	     * Creates an instance of a Power BI report page.
+	     *
+	     * @param {IReportNode} report
+	     * @param {string} name
+	     * @param {string} [displayName]
+	     */
 	    function Page(report, name, displayName) {
 	        this.report = report;
 	        this.name = name;
 	        this.displayName = displayName;
 	    }
 	    /**
-	     * Gets all page level filters within report
+	     * Gets all page level filters within the report.
 	     *
 	     * ```javascript
 	     * page.getFilters()
 	     *  .then(pages => { ... });
 	     * ```
+	     *
+	     * @returns {(Promise<models.IFilter[]>)}
 	     */
 	    Page.prototype.getFilters = function () {
 	        return this.report.service.hpm.get("/report/pages/" + this.name + "/filters", { uid: this.report.config.uniqueId }, this.report.iframe.contentWindow)
@@ -39067,6 +39349,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * page.getVisuals()
 	     *   .then(visuals => { ... });
 	     * ```
+	     *
+	     * @returns {Promise<Visual[]>}
 	     */
 	    Page.prototype.getVisuals = function () {
 	        var _this = this;
@@ -39081,21 +39365,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 	    };
 	    /**
-	     * Remove all filters on this page within the report
+	     * Removes all filters from this page of the report.
 	     *
 	     * ```javascript
 	     * page.removeFilters();
 	     * ```
+	     *
+	     * @returns {Promise<void>}
 	     */
 	    Page.prototype.removeFilters = function () {
 	        return this.setFilters([]);
 	    };
 	    /**
-	     * Make the current page the active page of the report.
+	     * Makes the current page the active page of the report.
 	     *
 	     * ```javascripot
 	     * page.setActive();
 	     * ```
+	     *
+	     * @returns {Promise<void>}
 	     */
 	    Page.prototype.setActive = function () {
 	        var page = {
@@ -39114,6 +39402,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * page.setFilters(filters);
 	     *   .catch(errors => { ... });
 	     * ```
+	     *
+	     * @param {(models.IFilter[])} filters
+	     * @returns {Promise<void>}
 	     */
 	    Page.prototype.setFilters = function (filters) {
 	        return this.report.service.hpm.put("/report/pages/" + this.name + "/filters", filters, { uid: this.report.config.uniqueId }, this.report.iframe.contentWindow)
@@ -39122,18 +39413,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 	    };
 	    /**
-	     * Creates new Visual object given a name of the visual.
+	     * Creates a Visual object given a name for the visual.
 	     *
 	     * Normally you would get Visual objects by calling `page.getVisuals()` but in the case
-	     * that the visual name is known and you want to perform an action on a visaul such as setting a filters
+	     * that the visual name is known and you want to perform an action on a visual such as setting a filter
 	     * without having to retrieve it first you can create it directly.
 	     *
-	     * Note: Since you are creating the visual manually there is no guarantee that the visual actually exists in the report and the subsequence requests could fail.
+	     * Note: Because you are creating the visual manually there is no guarantee that the visual actually exists in the report and the subsequence requests could fail.
 	     *
 	     * ```javascript
 	     * const visual = report.page('ReportSection1').visual('BarChart1');
 	     * visual.setFilters(filters);
 	     * ```
+	     *
+	     * @param {string} name
+	     * @returns {Visual}
 	     */
 	    Page.prototype.visual = function (name) {
 	        return new visual_1.Visual(this, name);
@@ -39147,18 +39441,28 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 7 */
 /***/ function(module, exports) {
 
+	/**
+	 * A Power BI visual within a page
+	 *
+	 * @export
+	 * @class Visual
+	 * @implements {IVisualNode}
+	 * @implements {IFilterable}
+	 */
 	var Visual = (function () {
 	    function Visual(page, name) {
 	        this.name = name;
 	        this.page = page;
 	    }
 	    /**
-	     * Gets all page level filters within report
+	     * Gets all page level filters within a report.
 	     *
 	     * ```javascript
 	     * visual.getFilters()
 	     *  .then(pages => { ... });
 	     * ```
+	     *
+	     * @returns {(Promise<models.IFilter[]>)}
 	     */
 	    Visual.prototype.getFilters = function () {
 	        return this.page.report.service.hpm.get("/report/pages/" + this.page.name + "/visuals/" + this.name + "/filters", { uid: this.page.report.config.uniqueId }, this.page.report.iframe.contentWindow)
@@ -39167,22 +39471,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 	    };
 	    /**
-	     * Remove all filters on this page within the report
+	     * Removes all filters on this page of the report.
 	     *
 	     * ```javascript
 	     * visual.removeFilters();
 	     * ```
+	     *
+	     * @returns {Promise<void>}
 	     */
 	    Visual.prototype.removeFilters = function () {
 	        return this.setFilters([]);
 	    };
 	    /**
-	     * Set all filters at the visual level of the page
+	     * Sets all filters at the visual level of the page.
 	     *
 	     * ```javascript
 	     * visual.setFilters(filters)
 	     *  .catch(errors => { ... });
 	     * ```
+	     *
+	     * @param {(models.IFilter[])} filters
+	     * @returns {Promise<void>}
 	     */
 	    Visual.prototype.setFilters = function (filters) {
 	        return this.page.report.service.hpm.put("/report/pages/" + this.page.name + "/visuals/" + this.name + "/filters", filters, { uid: this.page.report.config.uniqueId }, this.page.report.iframe.contentWindow)
@@ -39204,12 +39513,95 @@ return /******/ (function(modules) { // webpackBootstrap
 	    function __() { this.constructor = d; }
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
+	var embed = __webpack_require__(2);
+	/**
+	 * A Power BI Dashboard embed component
+	 *
+	 * @export
+	 * @class Dashboard
+	 * @extends {embed.Embed}
+	 * @implements {IDashboardNode}
+	 * @implements {IFilterable}
+	 */
+	var Dashboard = (function (_super) {
+	    __extends(Dashboard, _super);
+	    /**
+	     * Creates an instance of a Power BI Dashboard.
+	     *
+	     * @param {service.Service} service
+	     * @param {HTMLElement} element
+	     */
+	    function Dashboard(service, element, config) {
+	        _super.call(this, service, element, config);
+	        Array.prototype.push.apply(this.allowedEvents, Dashboard.allowedEvents);
+	    }
+	    /**
+	     * This adds backwards compatibility for older config which used the dashboardId query param to specify dashboard id.
+	     * E.g. https://powerbi-df.analysis-df.windows.net/dashboardEmbedHost?dashboardId=e9363c62-edb6-4eac-92d3-2199c5ca2a9e
+	     *
+	     * By extracting the id we can ensure id is always explicitly provided as part of the load configuration.
+	     *
+	     * @static
+	     * @param {string} url
+	     * @returns {string}
+	     */
+	    Dashboard.findIdFromEmbedUrl = function (url) {
+	        var dashboardIdRegEx = /dashboardId="?([^&]+)"?/;
+	        var dashboardIdMatch = url.match(dashboardIdRegEx);
+	        var dashboardId;
+	        if (dashboardIdMatch) {
+	            dashboardId = dashboardIdMatch[1];
+	        }
+	        return dashboardId;
+	    };
+	    /**
+	     * Get dashboard id from first available location: options, attribute, embed url.
+	     *
+	     * @returns {string}
+	     */
+	    Dashboard.prototype.getId = function () {
+	        var dashboardId = this.config.id || this.element.getAttribute(Dashboard.dashboardIdAttribute) || Dashboard.findIdFromEmbedUrl(this.config.embedUrl);
+	        if (typeof dashboardId !== 'string' || dashboardId.length === 0) {
+	            throw new Error("Dashboard id is required, but it was not found. You must provide an id either as part of embed configuration or as attribute '" + Dashboard.dashboardIdAttribute + "'.");
+	        }
+	        return dashboardId;
+	    };
+	    Dashboard.allowedEvents = ["tileClicked", "error"];
+	    Dashboard.dashboardIdAttribute = 'powerbi-dashboard-id';
+	    Dashboard.typeAttribute = 'powerbi-type';
+	    Dashboard.type = "Dashboard";
+	    return Dashboard;
+	}(embed.Embed));
+	exports.Dashboard = Dashboard;
+
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
 	var embed_1 = __webpack_require__(2);
+	/**
+	 * The Power BI tile embed component
+	 *
+	 * @export
+	 * @class Tile
+	 * @extends {Embed}
+	 */
 	var Tile = (function (_super) {
 	    __extends(Tile, _super);
 	    function Tile() {
 	        _super.apply(this, arguments);
 	    }
+	    /**
+	     * The ID of the tile
+	     *
+	     * @returns {string}
+	     */
 	    Tile.prototype.getId = function () {
 	        throw Error('Not implemented. Embedding tiles is not supported yet.');
 	    };
@@ -39220,16 +39612,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var config_1 = __webpack_require__(10);
-	var wpmp = __webpack_require__(11);
-	var hpm = __webpack_require__(12);
-	var router = __webpack_require__(13);
-	/**
-	 * TODO: Need to get sdk version and settings from package.json, Generate config file via gulp task?
-	 */
+	var config_1 = __webpack_require__(11);
+	var wpmp = __webpack_require__(12);
+	var hpm = __webpack_require__(13);
+	var router = __webpack_require__(14);
 	exports.hpmFactory = function (wpmp, defaultTargetWindow, sdkVersion, sdkType) {
 	    if (sdkVersion === void 0) { sdkVersion = config_1.default.version; }
 	    if (sdkType === void 0) { sdkType = config_1.default.type; }
@@ -39256,11 +39645,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports) {
 
 	var config = {
-	    version: '2.0.0-beta.12',
+	    version: '2.1.0',
 	    type: 'js'
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -39268,10 +39657,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/*! window-post-message-proxy v0.2.1 | (c) 2016 Microsoft Corporation MIT */
+	/*! window-post-message-proxy v0.2.4 | (c) 2016 Microsoft Corporation MIT */
 	(function webpackUniversalModuleDefinition(root, factory) {
 		if(true)
 			module.exports = factory();
@@ -39371,6 +39760,30 @@ return /******/ (function(modules) { // webpackBootstrap
 		        return !!message.error;
 		    };
 		    /**
+		     * Utility to create a deferred object.
+		     */
+		    // TODO: Look to use RSVP library instead of doing this manually.
+		    // From what I searched RSVP would work better because it has .finally and .deferred; however, it doesn't have Typings information. 
+		    WindowPostMessageProxy.createDeferred = function () {
+		        var deferred = {
+		            resolve: null,
+		            reject: null,
+		            promise: null
+		        };
+		        var promise = new Promise(function (resolve, reject) {
+		            deferred.resolve = resolve;
+		            deferred.reject = reject;
+		        });
+		        deferred.promise = promise;
+		        return deferred;
+		    };
+		    /**
+		     * Utility to generate random sequence of characters used as tracking id for promises.
+		     */
+		    WindowPostMessageProxy.createRandomString = function () {
+		        return (Math.random() + 1).toString(36).substring(7);
+		    };
+		    /**
 		     * Adds handler.
 		     * If the first handler whose test method returns true will handle the message and provide a response.
 		     */
@@ -39383,7 +39796,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		     */
 		    WindowPostMessageProxy.prototype.removeHandler = function (handler) {
 		        var handlerIndex = this.handlers.indexOf(handler);
-		        if (handlerIndex == -1) {
+		        if (handlerIndex === -1) {
 		            throw new Error("You attempted to remove a handler but no matching handler was found.");
 		        }
 		        this.handlers.splice(handlerIndex, 1);
@@ -39531,30 +39944,6 @@ return /******/ (function(modules) { // webpackBootstrap
 		            delete this.pendingRequestPromises[trackingProperties.id];
 		        }
 		    };
-		    /**
-		     * Utility to create a deferred object.
-		     */
-		    // TODO: Look to use RSVP library instead of doing this manually.
-		    // From what I searched RSVP would work better because it has .finally and .deferred; however, it doesn't have Typings information. 
-		    WindowPostMessageProxy.createDeferred = function () {
-		        var deferred = {
-		            resolve: null,
-		            reject: null,
-		            promise: null
-		        };
-		        var promise = new Promise(function (resolve, reject) {
-		            deferred.resolve = resolve;
-		            deferred.reject = reject;
-		        });
-		        deferred.promise = promise;
-		        return deferred;
-		    };
-		    /**
-		     * Utility to generate random sequence of characters used as tracking id for promises.
-		     */
-		    WindowPostMessageProxy.createRandomString = function () {
-		        return (Math.random() + 1).toString(36).substring(7);
-		    };
 		    WindowPostMessageProxy.messagePropertyName = "windowPostMessageProxy";
 		    return WindowPostMessageProxy;
 		}());
@@ -39568,10 +39957,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	//# sourceMappingURL=windowPostMessageProxy.js.map
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/*! http-post-message v0.2.1 | (c) 2016 Microsoft Corporation MIT */
+	/*! http-post-message v0.2.3 | (c) 2016 Microsoft Corporation MIT */
 	(function webpackUniversalModuleDefinition(root, factory) {
 		if(true)
 			module.exports = factory();
@@ -39752,10 +40141,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	//# sourceMappingURL=httpPostMessage.js.map
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/*! powerbi-router v0.1.2 | (c) 2016 Microsoft Corporation MIT */
+	/*! powerbi-router v0.1.5 | (c) 2016 Microsoft Corporation MIT */
 	(function webpackUniversalModuleDefinition(root, factory) {
 		if(true)
 			module.exports = factory();
@@ -40579,7 +40968,7 @@ return /******/ (function(modules) { // webpackBootstrap
 });
 ;
 //# sourceMappingURL=powerbi.js.map
-/*! angular-powerbi v1.0.0-beta.7 | (c) 2016 Microsoft Corporation MIT */
+/*! angular-powerbi v1.0.0 | (c) 2016 Microsoft Corporation MIT */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory(require("angular"));
@@ -40676,6 +41065,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	"use strict";
 	var Controller = (function () {
+	    /* tslint:enable:member-ordering */
 	    function Controller($scope, $timeout, powerBiService) {
 	        this.$scope = $scope;
 	        this.$timeout = $timeout;
@@ -40718,6 +41108,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 	    };
 	    /**
+	     * Handler when component is removed from DOM. Forwards call to service to perform cleanup of references before DOM is modified.
+	     */
+	    Controller.prototype.reset = function (element) {
+	        this.powerBiService.reset(element);
+	        this.component = null;
+	    };
+	    /**
 	     * Given an HTMLElement, construct an embed configuration based on attributes and pass to service.
 	     */
 	    Controller.prototype.embed = function (element) {
@@ -40731,13 +41128,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        angular.extend(config, this.options);
 	        this.component = this.powerBiService.embed(element, config);
 	        this.onEmbedded({ $embed: this.component });
-	    };
-	    /**
-	     * Handler when component is removed from DOM. Forwards call to service to perform cleanup of references before DOM is modified.
-	     */
-	    Controller.prototype.reset = function (element) {
-	        this.powerBiService.reset(element);
-	        this.component = null;
 	    };
 	    Controller.prototype.debounce = function (func, wait) {
 	        var _this = this;
@@ -40760,6 +41150,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return (typeof this.embedUrl === 'string' && this.embedUrl.length > 0)
 	            && (typeof this.accessToken === 'string' && this.accessToken.length > 0);
 	    };
+	    /* tslint:disable:member-ordering */
 	    Controller.$inject = [
 	        '$scope',
 	        '$timeout',
@@ -40804,6 +41195,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	"use strict";
 	var Controller = (function () {
+	    /* tslint:enable:member-ordering */
 	    function Controller($scope, powerBiService) {
 	        this.$scope = $scope;
 	        this.powerBiService = powerBiService;
@@ -40834,18 +41226,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }, true);
 	    };
 	    /**
-	     * Given an HTMLElement, construct an embed configuration based on attributes and pass to service.
-	     */
-	    Controller.prototype.embed = function (element, options) {
-	        this.component = this.powerBiService.embed(element, options);
-	        this.onEmbedded({ $embed: this.component });
-	    };
-	    /**
 	     * Handler when component is removed from DOM. Forwards call to service to perform cleanup of references before DOM is modified.
 	     */
 	    Controller.prototype.reset = function (element) {
 	        this.powerBiService.reset(element);
 	        this.component = null;
+	    };
+	    /**
+	     * Given an HTMLElement, construct an embed configuration based on attributes and pass to service.
+	     */
+	    Controller.prototype.embed = function (element, options) {
+	        this.component = this.powerBiService.embed(element, options);
+	        this.onEmbedded({ $embed: this.component });
 	    };
 	    /**
 	     * Ensure required options (embedUrl and accessToken are valid before attempting to embed)
@@ -40866,6 +41258,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    Controller.prototype.validateReportOptions = function (options) {
 	        return true;
 	    };
+	    /* tslint:disable:member-ordering */
 	    Controller.$inject = [
 	        '$scope',
 	        'PowerBiService'
@@ -40907,6 +41300,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	"use strict";
 	var PowerBiService = (function () {
+	    /* tslint:enable:member-ordering */
 	    function PowerBiService(powerbi) {
 	        this.powerBiCoreService = powerbi;
 	    }
@@ -40922,6 +41316,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    PowerBiService.prototype.reset = function (element) {
 	        this.powerBiCoreService.reset(element);
 	    };
+	    /* tslint:disable:member-ordering */
 	    PowerBiService.$inject = [
 	        'PowerBiGlobal'
 	    ];

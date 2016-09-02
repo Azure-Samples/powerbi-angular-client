@@ -566,6 +566,12 @@
 	                navContentPaneEnabled: true
 	            }
 	        });
+	        this.filtersNode = {
+	            name: undefined,
+	            filterable: null,
+	            filters: [],
+	            nodes: []
+	        };
 	    }
 	    Controller.prototype.onEmbedded = function (report) {
 	        var _this = this;
@@ -585,6 +591,84 @@
 	        console.log('onFilterAdded');
 	        console.log(filter, filterable);
 	        filterable.setFilters([filter]);
+	    };
+	    Controller.prototype.onRefreshFilters = function () {
+	        var _this = this;
+	        console.log('onRefreshFilters');
+	        this.report.getFilters()
+	            .then(function (filters) {
+	            _this.$scope.$apply(function () {
+	                _this.filtersNode.filters = filters;
+	            });
+	        });
+	        var pageNodePromises = this.reportPages
+	            .map(function (page) {
+	            return page.getFilters()
+	                .then(function (filters) {
+	                var node;
+	                var filteredNodes = _this.filtersNode.nodes.filter(function (node) { return node.name === page.name; });
+	                if (filteredNodes.length === 1) {
+	                    node = filteredNodes[0];
+	                    node.filters = filters;
+	                }
+	                else {
+	                    var newNode = {
+	                        name: page.name,
+	                        filterable: null,
+	                        filters: filters,
+	                        nodes: []
+	                    };
+	                    _this.filtersNode.nodes.push(newNode);
+	                }
+	            });
+	        });
+	        Promise.all(pageNodePromises)
+	            .then(function () {
+	            _this.$scope.$apply(function () { });
+	        });
+	    };
+	    Controller.prototype.onRemoveFilter = function (filterToRemove, filterableName) {
+	        var _this = this;
+	        console.log(filterToRemove, filterableName);
+	        var promise;
+	        var filterable;
+	        var filtersNode;
+	        if (!filterableName) {
+	            filterable = this.report;
+	            filtersNode = this.filtersNode;
+	        }
+	        else {
+	            var filteredPages_1 = this.reportPages.filter(function (page) { return page.name === filterableName; });
+	            if (filteredPages_1.length !== 1) {
+	                throw new Error("Could not find filterable object matching name: " + filterableName + ".  There is likely a problem with how the filterableName is being assigned in event.");
+	            }
+	            filterable = filteredPages_1[0];
+	            var filteredNodes = this.filtersNode.nodes.filter(function (node) { return node.name === filteredPages_1[0].name; });
+	            if (filteredNodes.length !== 1) {
+	                throw new Error("Could not find node matching name: " + filteredPages_1[0].name + ".");
+	            }
+	            filtersNode = filteredNodes[0];
+	        }
+	        return filterable.getFilters()
+	            .then(function (filters) {
+	            var index = -1;
+	            filters.some(function (filter, i) {
+	                if (_this.areFiltersEqual(filter, filterToRemove)) {
+	                    index = i;
+	                    return true;
+	                }
+	            });
+	            if (index !== -1) {
+	                filters.splice(index, 1);
+	                return filterable.setFilters(filters)
+	                    .then(function () {
+	                    _this.$scope.$apply(function () {
+	                        filtersNode.filters = filters;
+	                    });
+	                });
+	            }
+	            return Promise.reject(new Error('Could not find filter'));
+	        });
 	    };
 	    Controller.prototype.removeReportFiltersClicked = function () {
 	        console.log('removeReportFilters');
@@ -607,6 +691,52 @@
 	    };
 	    Controller.prototype.predefinedFIlter3Clicked = function () {
 	        this.report.page('ReportSection2').setFilters([Controller.predefinedFilter3.toJSON()]);
+	    };
+	    Controller.prototype.areFiltersEqual = function (filterA, filterB) {
+	        var filterAType = pbi.models.getFilterType(filterA);
+	        var filterATarget = filterA.target;
+	        var advancedFilterA;
+	        var basicFilterA;
+	        var filterBType = pbi.models.getFilterType(filterB);
+	        var filterBTarget = filterB.target;
+	        var advancedFilterB;
+	        var basicFilterB;
+	        if (filterAType === pbi.models.FilterType.Advanced) {
+	            advancedFilterA = filterA;
+	        }
+	        else if (filterAType === pbi.models.FilterType.Basic) {
+	            basicFilterA = filterA;
+	        }
+	        if (filterBType === pbi.models.FilterType.Advanced) {
+	            advancedFilterB = filterB;
+	        }
+	        else if (filterBType === pbi.models.FilterType.Basic) {
+	            basicFilterB = filterB;
+	        }
+	        var areTargetsEqual = filterATarget.table === filterBTarget.table
+	            && filterATarget.column === filterBTarget.column
+	            && filterATarget.hierarchy === filterBTarget.hierarchy
+	            && filterATarget.hierarchyLevel === filterBTarget.hierarchyLevel
+	            && filterATarget.measure === filterBTarget.measure;
+	        if (!areTargetsEqual) {
+	            return false;
+	        }
+	        if (advancedFilterA && advancedFilterB) {
+	            return advancedFilterA.logicalOperator === advancedFilterB.logicalOperator
+	                && advancedFilterA.conditions.every(function (condition) {
+	                    return advancedFilterB.conditions.some(function (conditionB) {
+	                        return condition.operator === conditionB.operator
+	                            && condition.value === conditionB.value;
+	                    });
+	                });
+	        }
+	        else if (basicFilterA && basicFilterB) {
+	            return basicFilterA.operator === basicFilterB.operator
+	                && basicFilterA.values.every(function (value) {
+	                    return basicFilterB.values.some(function (valueB) { return valueB === value; });
+	                });
+	        }
+	        return false;
 	    };
 	    Controller.predefinedFilter1 = new pbi.models.AdvancedFilter({
 	        table: "Store",
@@ -662,7 +792,7 @@
 
 	"use strict";
 	var modelResolver = function (ReportsService) {
-	    return ReportsService.findById('c4d31ef0-7b34-4d80-9bcb-5974d1405572', true);
+	    return ReportsService.findById('c52af8ab-0468-4165-92af-dc39858d66ad');
 	};
 	modelResolver["$inject"] = ['ReportsService'];
 	var state = {
@@ -742,7 +872,7 @@
 
 	"use strict";
 	var modelResolver = function (ReportsService) {
-	    return ReportsService.findById('c4d31ef0-7b34-4d80-9bcb-5974d1405572', true);
+	    return ReportsService.findById('c52af8ab-0468-4165-92af-dc39858d66ad');
 	};
 	modelResolver["$inject"] = ['ReportsService'];
 	var state = {
@@ -963,6 +1093,12 @@
 	                _this.selectedPage = pages[0];
 	            }
 	        });
+	        this.$scope.$watch(function () { return _this.filtersNode; }, function (filtersNode, oldFiltersNode) {
+	            if (filtersNode === oldFiltersNode) {
+	                return;
+	            }
+	            console.log('filtersNode changed');
+	        }, true);
 	    }
 	    Controller.prototype.onSubmit = function () {
 	        console.log('submit');
@@ -979,6 +1115,20 @@
 	            filter = new pbi.models.AdvancedFilter(data.target, data.operator.operator, data.operator.values);
 	        }
 	        this.onAddFilter({ $filter: filter.toJSON(), $target: data.filterable });
+	    };
+	    Controller.prototype.refreshClicked = function () {
+	        console.log('refresh');
+	        this.onRefreshFilters();
+	    };
+	    Controller.prototype.remove = function (filter, filterableName) {
+	        console.log('remove');
+	        this.onRemoveFilter({
+	            $filter: filter,
+	            $filterableName: filterableName
+	        })
+	            .then(function () {
+	            console.log('filter removed');
+	        });
 	    };
 	    Controller.prototype.getFilterTypeTarget = function () {
 	        var target = {
@@ -1041,7 +1191,10 @@
 	        this.templateUrl = "/app/components/powerbi-filter-pane/template.html";
 	        this.scope = {
 	            pages: "=",
-	            onAddFilter: "&"
+	            filtersNode: "=",
+	            onAddFilter: "&",
+	            onRefreshFilters: "&",
+	            onRemoveFilter: "&"
 	        };
 	        this.controller = Controller;
 	        this.bindToController = true;
