@@ -19,7 +19,7 @@ npm install
 
 ### Run Build
 ```
-npm build
+npm run build
 ```
 
 ### Serve the files from the root of the repository:
