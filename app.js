@@ -1190,6 +1190,7 @@
 	        this.restrict = "E";
 	        this.templateUrl = "/app/components/powerbi-filter-pane/template.html";
 	        this.scope = {
+	            report: "=",
 	            pages: "=",
 	            filtersNode: "=",
 	            onAddFilter: "&",
