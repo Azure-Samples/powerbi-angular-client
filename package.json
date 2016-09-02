@@ -11,6 +11,8 @@
     "gulp": "gulp",
     "typings": "typings"
   },
+  "homepage": "http://azure-samples.github.io/powerbi-angular-client",
+  "repository": "https://github.com/Azure-Samples/powerbi-angular-client",
   "author": "Microsoft Power BI Team",
   "license": "MIT",
   "devDependencies": {
