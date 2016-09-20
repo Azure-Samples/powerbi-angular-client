@@ -13,12 +13,12 @@
     <button type="button" class="btn btn-success" ng-click="vm.showAllClicked()">Show All</button>
     <div class="checkbox">
         <label for="filterPaneCheckbox">
-            <input type="checkbox" name="filterPaneCheckbox" id="filterPaneCheckbox" checked="checked"> Enable filter pane when embedding report.
+            <input type="checkbox" name="filterPaneCheckbox" id="filterPaneCheckbox" checked="checked" /> Enable filter pane when embedding report.
         </label>
     </div>
 </form>
 
-<p class="reportslistdescription" >Total Results: <span id="reportslistcount">{{vm.reports.length}}<span></p>
+<p class="reportslistdescription" >Total Results: <span id="reportslistcount">{{vm.reports.length}}</span></p>
 <ol id="reportslist">
     <li ng-repeat="report in vm.reports">
         <span class="report-name">{{report.name}}</span>
@@ -28,4 +28,4 @@
 <p class="text-right">
     <button type="button" class="btn btn-danger" ng-click="vm.resetClicked()">Reset</button>
 </p>
-<powerbi-component options="vm.report"></powerbi-report>
+<powerbi-component options="vm.report"></powerbi-component>
